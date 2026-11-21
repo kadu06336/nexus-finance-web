@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KRONO FINANCE • Cyber Ledger</title>
+  <title>NEXUS FINANCE • Cyber Ledger</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -33,7 +33,7 @@
       background: var(--fundo);
       color: var(--texto);
       min-height: 100vh;
-      padding: 16px 24px 36px;
+      padding: 16px 24px 28px;
     }
 
     .topo {
@@ -56,12 +56,22 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
 
     .controles-topo label {
       color: var(--muted);
       font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .usuario-badge {
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 6px;
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      color: var(--ciano);
       font-weight: 700;
     }
 
@@ -71,7 +81,7 @@
       border: 1px solid var(--borda);
       border-radius: 6px;
       padding: 7px 10px;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       outline: none;
     }
 
@@ -83,7 +93,7 @@
       border: none;
       border-radius: 6px;
       padding: 8px 12px;
-      font-size: 0.84rem;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
       text-decoration: none;
@@ -91,11 +101,6 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-    }
-
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 0.76rem;
     }
 
     .btn-csv {
@@ -180,7 +185,7 @@
       margin-bottom: 3px;
     }
 
-    .campo input, .campo select {
+    .campo input {
       width: 100%;
     }
 
@@ -199,52 +204,23 @@
       font-weight: 800;
     }
 
-    .tabela-wrap {
+    .historico-box {
       background: var(--input);
       border: 1px solid var(--borda);
       border-radius: 8px;
+      padding: 10px;
+      font-family: Consolas, monospace;
+      font-size: 0.9rem;
+      min-height: 170px;
       max-height: 280px;
       overflow-y: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.86rem;
-    }
-
-    th, td {
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--borda);
-      text-align: left;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      position: sticky;
-      top: 0;
-      background: var(--card-alt);
-    }
-
-    .acoes-td {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
+      white-space: pre-wrap;
     }
 
     .cards-resumo {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .cards-extra {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 14px;
     }
 
@@ -252,18 +228,15 @@
       .cards-resumo {
         grid-template-columns: repeat(2, 1fr);
       }
-      .cards-extra {
-        grid-template-columns: 1fr;
-      }
     }
 
     .mini-card {
       background: var(--card);
       border: 1px solid var(--borda);
       border-radius: 8px;
-      padding: 12px 10px;
+      padding: 12px 8px;
       text-align: center;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 800;
     }
 
@@ -273,37 +246,9 @@
       font-size: 1.05rem;
     }
 
-    .meta-barra-wrap {
-      width: 100%;
-      height: 14px;
-      background: var(--input);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid var(--borda);
-      margin: 8px 0;
-    }
-
-    .meta-barra-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--verde);
-      transition: width 0.25s ease;
-    }
-
     .grid-graficos {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 14px;
-      background: var(--card);
-      border: 1px solid var(--borda);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .grid-graficos-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.25fr 1fr;
       gap: 14px;
       background: var(--card);
       border: 1px solid var(--borda);
@@ -312,21 +257,19 @@
     }
 
     @media (max-width: 900px) {
-      .grid-graficos, .grid-graficos-2 {
+      .grid-graficos {
         grid-template-columns: 1fr;
       }
     }
 
     .grafico-box {
       position: relative;
-      width: 100%;
-      height: 310px;
-      min-height: 310px;
+      height: 360px;
     }
 
     .grafico-titulo {
       color: var(--ciano);
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 800;
       text-align: center;
       margin-bottom: 8px;
@@ -340,7 +283,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      padding-top: 22px;
+      padding-top: 20px;
     }
 
     .sobra-centro small {
@@ -382,267 +325,238 @@
       color: #d1fae5;
     }
 
-    .modal-login {
-      position: fixed;
-      inset: 0;
-      background: rgba(9, 13, 22, 0.92);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-      padding: 16px;
+    /* Tela de Login / Cadastro */
+    .auth-wrapper {
+      max-width: 420px;
+      margin: 48px auto;
     }
 
-    .modal-login.visivel {
-      display: flex;
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .auth-sub {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      line-height: 1.4;
     }
   </style>
 </head>
 <body>
-  <div id="modalLogin" class="modal-login">
-    <div class="card" style="width:100%; max-width:360px; padding:22px;">
-      <div class="card-titulo ciano" style="font-size:1.1rem;">🔐 ACESSO AO KRONO FINANCE</div>
-      <div class="campo">
-        <label for="senhaAcesso">Senha de acesso</label>
-        <input id="senhaAcesso" type="password" placeholder="Digite a senha" onkeydown="if(event.key==='Enter') fazerLogin()" />
-      </div>
-      <button class="btn btn-ciano" style="width:100%; margin-top:6px;" onclick="fazerLogin()">ENTRAR</button>
-    </div>
-  </div>
-
   <div class="topo">
-    <div class="titulo">◆ KRONO FINANCE ◆</div>
-    <div class="controles-topo">
+    <div class="titulo">◆ NEXUS FINANCE ◆</div>
+    <div class="controles-topo" id="controlesLogado" style="display: none;">
+      <span id="badgeUsuario" class="usuario-badge"></span>
       <label for="filtroPeriodo">PERÍODO:</label>
       <select id="filtroPeriodo" onchange="carregarEstado()">
         <option value="Todos">Todos</option>
       </select>
-      <a class="btn btn-csv" href="/exportar.csv">⬇ CSV</a>
-      <a class="btn btn-csv" href="/exportar.json">💾 BACKUP JSON</a>
-      <button class="btn btn-neutro" onclick="document.getElementById('inputImportar').click()">📂 IMPORTAR</button>
-      <input id="inputImportar" type="file" accept=".json,.csv" style="display:none" onchange="importarArquivo(this)" />
-      <button id="btnSair" class="btn btn-neutro" style="display:none" onclick="fazerLogout()">SAIR</button>
+      <a class="btn btn-csv" href="/exportar.csv">⬇ EXPORTAR CSV</a>
+      <button class="btn btn-neutro" onclick="fazerLogout()">SAIR</button>
     </div>
   </div>
 
   <div id="mensagemAviso" class="aviso"></div>
 
-  <div class="abas">
-    <button id="btn-diario" class="aba-btn ativa" onclick="trocarAba('diario', this)">📅 LANÇAMENTOS DIÁRIOS</button>
-    <button id="btn-fixos" class="aba-btn" onclick="trocarAba('fixos', this)">🔄 GASTOS FIXOS MENSAIS</button>
-    <button id="btn-resumo" class="aba-btn" onclick="trocarAba('resumo', this)">📊 RESUMO & GRÁFICO</button>
-    <button id="btn-caixa" class="aba-btn" onclick="trocarAba('caixa', this)">💵 SALDO EM CAIXA</button>
-  </div>
+  <!-- TELA DE LOGIN / CADASTRO -->
+  <section id="telaAuth" class="auth-wrapper" style="display: none;">
+    <div class="card" style="padding: 22px;">
+      <div class="card-titulo ciano" style="font-size: 1.1rem; margin-bottom: 6px;">🔐 ACESSO À CONTA</div>
+      <p class="auth-sub">
+        Cada pessoa tem sua própria conta e seus dados ficam isolados. Entre ou crie uma conta nova (mínimo de 6 caracteres na senha).
+      </p>
 
-  <!-- ABA 1: LANÇAMENTOS DIÁRIOS -->
-  <section id="aba-diario" class="aba-conteudo ativa">
-    <div class="grid-diario">
-      <div>
-        <div class="card">
-          <div class="card-titulo verde">💰 REGISTRAR GANHO</div>
-          <div class="campo">
-            <label>Descrição</label>
-            <input id="descGanho" type="text" placeholder="Ex: Salário, Freelance" />
-          </div>
-          <div class="campo">
-            <label>Valor R$</label>
-            <input id="valGanho" type="text" placeholder="0,00" />
-          </div>
-          <div class="campo">
-            <label>Data (DD/MM/AAAA)</label>
-            <input id="dataGanho" type="text" value="{{ hoje }}" />
-          </div>
-          <button class="btn btn-verde" style="width:100%" onclick="adicionarGanho()">➕ ADICIONAR GANHO</button>
-        </div>
-
-        <div class="card">
-          <div class="card-titulo vermelho">💸 REGISTRAR GASTO</div>
-          <div class="campo">
-            <label>Descrição</label>
-            <input id="descGasto" type="text" placeholder="Ex: Mercado, Restaurante" />
-          </div>
-          <div class="campo">
-            <label>Categoria</label>
-            <select id="catGasto">
-              <option value="Alimentação">Alimentação</option>
-              <option value="Moradia">Moradia</option>
-              <option value="Transporte">Transporte</option>
-              <option value="Lazer">Lazer</option>
-              <option value="Saúde">Saúde</option>
-              <option value="Assinaturas">Assinaturas</option>
-              <option value="Geral" selected>Geral</option>
-            </select>
-          </div>
-          <div class="campo">
-            <label>Valor R$</label>
-            <input id="valGasto" type="text" placeholder="0,00" />
-          </div>
-          <div class="campo">
-            <label>Data (DD/MM/AAAA)</label>
-            <input id="dataGasto" type="text" value="{{ hoje }}" />
-          </div>
-          <button class="btn btn-vermelho" style="width:100%" onclick="adicionarGasto()">➖ ADICIONAR GASTO</button>
-        </div>
+      <div class="auth-tabs">
+        <button id="tabBtnLogin" class="btn btn-ciano" onclick="alternarModoAuth('login')">ENTRAR</button>
+        <button id="tabBtnRegistrar" class="btn btn-neutro" onclick="alternarModoAuth('registrar')">CRIAR CONTA</button>
       </div>
 
-      <div>
-        <div class="resumo-barra">
-          <span id="lblTotalG" class="verde">📈 GANHOS: R$ 0,00</span>
-          <span id="lblTotalGa" class="vermelho">📉 GASTOS: R$ 0,00</span>
-          <span id="lblFixosTotal" class="amarelo">🔄 FIXOS: R$ 0,00</span>
-          <span id="lblSobra" class="ciano">⚡ SALDO: R$ 0,00</span>
+      <form id="formAuth" onsubmit="enviarAuth(event)">
+        <div class="campo">
+          <label for="authEmail">E-mail</label>
+          <input id="authEmail" type="email" placeholder="voce@exemplo.com" required autocomplete="email" />
         </div>
-
-        <div class="card">
-          <div class="card-titulo verde">📈 HISTÓRICO DE GANHOS</div>
-          <div class="tabela-wrap">
-            <table>
-              <thead>
-                <tr><th>Nº</th><th>Data</th><th>Descrição</th><th>Valor</th><th style="text-align:right">Ações</th></tr>
-              </thead>
-              <tbody id="corpoGanhos"></tbody>
-            </table>
-          </div>
+        <div class="campo" style="margin-bottom: 14px;">
+          <label for="authSenha">Senha</label>
+          <input id="authSenha" type="password" placeholder="••••••••" required autocomplete="current-password" />
         </div>
-
-        <div class="card">
-          <div class="card-titulo vermelho">📉 HISTÓRICO DE GASTOS</div>
-          <div class="tabela-wrap">
-            <table>
-              <thead>
-                <tr><th>Nº</th><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th style="text-align:right">Ações</th></tr>
-              </thead>
-              <tbody id="corpoGastos"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+        <button id="btnSubmitAuth" type="submit" class="btn btn-verde" style="width: 100%;">ENTRAR NO PAINEL</button>
+      </form>
     </div>
   </section>
 
-  <!-- ABA 2: GASTOS FIXOS MENSAIS -->
-  <section id="aba-fixos" class="aba-conteudo">
-    <div class="grid-diario">
-      <div>
-        <div class="card">
-          <div class="card-titulo amarelo">🔄 NOVO GASTO FIXO</div>
-          <div class="campo">
-            <label>Descrição (ex: Aluguel, Internet, SaaS)</label>
-            <input id="descFixo" type="text" />
-          </div>
-          <div class="campo">
-            <label>Valor Mensal R$</label>
-            <input id="valFixo" type="text" placeholder="0,00" />
-          </div>
-          <button class="btn btn-amarelo" style="width:100%" onclick="adicionarFixo()">➕ ADICIONAR GASTO FIXO</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-titulo amarelo">📋 LISTA DE GASTOS FIXOS MENSAIS</div>
-        <div class="tabela-wrap" style="max-height:380px">
-          <table>
-            <thead>
-              <tr><th>Nº</th><th>Descrição</th><th>Valor Mensal</th><th style="text-align:right">Ações</th></tr>
-            </thead>
-            <tbody id="corpoFixos"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABA 3: RESUMO & GRÁFICO -->
-  <section id="aba-resumo" class="aba-conteudo">
-    <div class="cards-resumo">
-      <div class="mini-card ciano">💵 SALDO EM CAIXA<span id="resCaixa" class="valor">R$ 0,00</span></div>
-      <div class="mini-card verde"><span id="resGanhosLabel">📈 GANHOS</span><span id="resGanhos" class="valor">R$ 0,00</span></div>
-      <div class="mini-card vermelho"><span id="resGastosLabel">📉 GASTOS</span><span id="resGastos" class="valor">R$ 0,00</span></div>
-      <div class="mini-card">⚡ SALDO DISPONÍVEL<span id="resDisponivel" class="valor verde">R$ 0,00</span></div>
-      <div class="mini-card amarelo">🔄 FIXOS MENSAIS<span id="resFixos" class="valor">R$ 0,00</span></div>
-      <div class="mini-card">💎 SOBRA APÓS FIXOS<span id="resMensalFinal" class="valor verde">R$ 0,00</span></div>
+  <!-- PAINEL PRINCIPAL -->
+  <main id="painelPrincipal" style="display: none;">
+    <div class="abas">
+      <button class="aba-btn ativa" onclick="trocarAba('diario', this)">📅 LANÇAMENTOS DIÁRIOS</button>
+      <button class="aba-btn" onclick="trocarAba('fixos', this)">🔄 GASTOS FIXOS MENSAIS</button>
+      <button class="aba-btn" onclick="trocarAba('resumo', this)">📊 RESUMO & GRÁFICO</button>
+      <button class="aba-btn" onclick="trocarAba('caixa', this)">💵 SALDO EM CAIXA</button>
     </div>
 
-    <div class="cards-extra">
-      <div class="mini-card ciano">🎯 MARGEM SOBRE GANHOS<span id="resMargem" class="valor">0,0%</span></div>
-      <div class="mini-card amarelo">🏆 MAIOR GASTO<span id="resMaiorGasto" class="valor">—</span></div>
-      <div class="mini-card verde">🧾 MÉDIA POR GASTO<span id="resMediaGasto" class="valor">R$ 0,00</span></div>
-    </div>
-
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <!-- ABA 1: LANÇAMENTOS DIÁRIOS -->
+    <section id="aba-diario" class="aba-conteudo ativa">
+      <div class="grid-diario">
         <div>
-          <div class="card-titulo amarelo" style="margin-bottom:4px;">🎯 META MENSAL DE GASTOS</div>
-          <div id="textoMetaStatus" style="font-size:0.86rem; color:var(--muted);">Nenhuma meta definida.</div>
-        </div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <input id="inputMetaMensal" type="text" placeholder="Ex: 2500,00" style="width:150px;" />
-          <button class="btn btn-amarelo" onclick="salvarMeta()">SALVAR META</button>
-        </div>
-      </div>
-      <div class="meta-barra-wrap">
-        <div id="barraMetaFill" class="meta-barra-fill"></div>
-      </div>
-    </div>
+          <div class="card">
+            <div class="card-titulo verde">💰 REGISTRAR GANHO</div>
+            <div class="campo">
+              <label>Descrição</label>
+              <input id="descGanho" type="text" placeholder="Ex: Salário, Freelance" />
+            </div>
+            <div class="campo">
+              <label>Valor R$</label>
+              <input id="valGanho" type="text" placeholder="0,00" />
+            </div>
+            <div class="campo">
+              <label>Data (DD/MM/AAAA)</label>
+              <input id="dataGanho" type="text" value="{{ hoje }}" />
+            </div>
+            <button class="btn btn-verde" style="width:100%" onclick="adicionarGanho()">➕ ADICIONAR GANHO</button>
+          </div>
 
-    <div class="grid-graficos">
-      <div>
-        <div id="tituloGraficoBar" class="grafico-titulo">TOP GASTOS • Todos</div>
-        <div class="grafico-box">
-          <canvas id="graficoBarras"></canvas>
-        </div>
-      </div>
+          <div class="card">
+            <div class="card-titulo vermelho">💸 REGISTRAR GASTO</div>
+            <div class="campo">
+              <label>Descrição (ex: Mercado, Restaurante)</label>
+              <input id="descGasto" type="text" placeholder="Ex: Mercado" />
+            </div>
+            <div class="campo">
+              <label>Valor R$</label>
+              <input id="valGasto" type="text" placeholder="0,00" />
+            </div>
+            <div class="campo">
+              <label>Data (DD/MM/AAAA)</label>
+              <input id="dataGasto" type="text" value="{{ hoje }}" />
+            </div>
+            <button class="btn btn-vermelho" style="width:100%" onclick="adicionarGasto()">➖ ADICIONAR GASTO</button>
+          </div>
 
-      <div>
-        <div class="grafico-titulo">FLUXO FINANCEIRO</div>
-        <div class="grafico-box">
-          <canvas id="graficoRosca"></canvas>
-          <div class="sobra-centro">
-            <small>SOBRA LÍQUIDA</small>
-            <strong id="sobraLiquidaCentro" class="verde">R$ 0</strong>
+          <div class="card">
+            <div class="card-titulo amarelo">🗑️ REMOVER LANÇAMENTO</div>
+            <div class="campo">
+              <label>Tipo: 1=Ganho  2=Gasto</label>
+              <input id="tipoDel" type="text" value="2" style="width:80px" />
+            </div>
+            <div class="campo">
+              <label>Número do item (Nº)</label>
+              <input id="numDel" type="text" style="width:80px" />
+            </div>
+            <button class="btn btn-amarelo" style="width:100%" onclick="removerLancamento()">REMOVER ITEM</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="resumo-barra">
+            <span id="lblTotalG" class="verde">📈 GANHOS: R$ 0,00</span>
+            <span id="lblTotalGa" class="vermelho">📉 GASTOS: R$ 0,00</span>
+            <span id="lblFixosTotal" class="amarelo">🔄 FIXOS: R$ 0,00</span>
+            <span id="lblSobra" class="ciano">⚡ SALDO: R$ 0,00</span>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo verde">📈 HISTÓRICO DE GANHOS</div>
+            <div id="listaGanhos" class="historico-box"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo vermelho">📉 HISTÓRICO DE GASTOS</div>
+            <div id="listaGastos" class="historico-box"></div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="grid-graficos-2">
-      <div>
-        <div class="grafico-titulo">GASTOS POR CATEGORIA</div>
-        <div class="grafico-box">
-          <canvas id="graficoCategorias"></canvas>
+    <!-- ABA 2: GASTOS FIXOS MENSAIS -->
+    <section id="aba-fixos" class="aba-conteudo">
+      <div class="grid-diario">
+        <div>
+          <div class="card">
+            <div class="card-titulo amarelo">🔄 NOVO GASTO FIXO</div>
+            <div class="campo">
+              <label>Descrição (ex: Aluguel, Internet, SaaS)</label>
+              <input id="descFixo" type="text" />
+            </div>
+            <div class="campo">
+              <label>Valor Mensal R$</label>
+              <input id="valFixo" type="text" placeholder="0,00" />
+            </div>
+            <button class="btn btn-amarelo" style="width:100%" onclick="adicionarFixo()">➕ ADICIONAR GASTO FIXO</button>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo ciano">🗑️ REMOVER GASTO FIXO</div>
+            <div class="campo">
+              <label>Número do gasto fixo</label>
+              <input id="numFixoDel" type="text" style="width:90px" />
+            </div>
+            <button class="btn btn-neutro" style="width:100%" onclick="removerFixo()">REMOVER FIXO</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titulo amarelo">📋 LISTA DE GASTOS FIXOS MENSAIS</div>
+          <div id="listaFixos" class="historico-box" style="min-height:360px"></div>
         </div>
       </div>
+    </section>
 
-      <div>
-        <div class="grafico-titulo">COMPARATIVO GERAL • CAIXA, GANHOS, GASTOS E FIXOS</div>
-        <div class="grafico-box">
-          <canvas id="graficoComparativo"></canvas>
+    <!-- ABA 3: RESUMO & GRÁFICO -->
+    <section id="aba-resumo" class="aba-conteudo">
+      <div class="cards-resumo">
+        <div class="mini-card ciano">💵 SALDO EM CAIXA<span id="resCaixa" class="valor">R$ 0,00</span></div>
+        <div class="mini-card verde"><span id="resGanhosLabel">📈 GANHOS</span><span id="resGanhos" class="valor">R$ 0,00</span></div>
+        <div class="mini-card vermelho"><span id="resGastosLabel">📉 GASTOS</span><span id="resGastos" class="valor">R$ 0,00</span></div>
+        <div class="mini-card">⚡ SALDO DISPONÍVEL<span id="resDisponivel" class="valor verde">R$ 0,00</span></div>
+        <div class="mini-card amarelo">🔄 FIXOS MENSAIS<span id="resFixos" class="valor">R$ 0,00</span></div>
+        <div class="mini-card">💎 SOBRA APÓS FIXOS<span id="resMensalFinal" class="valor verde">R$ 0,00</span></div>
+      </div>
+
+      <div class="grid-graficos">
+        <div>
+          <div id="tituloGraficoBar" class="grafico-titulo">TOP GASTOS • Todos</div>
+          <div class="grafico-box">
+            <canvas id="graficoBarras"></canvas>
+          </div>
+        </div>
+
+        <div>
+          <div class="grafico-titulo">FLUXO FINANCEIRO</div>
+          <div class="grafico-box">
+            <canvas id="graficoRosca"></canvas>
+            <div class="sobra-centro">
+              <small>SOBRA LÍQUIDA</small>
+              <strong id="sobraLiquidaCentro" class="verde">R$ 0</strong>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ABA 4: SALDO EM CAIXA -->
-  <section id="aba-caixa" class="aba-conteudo">
-    <div class="card" style="max-width:620px; margin:20px auto; padding:24px;">
-      <div class="card-titulo ciano" style="font-size:1.1rem;">💵 CONTROLE DE SALDO EM CAIXA</div>
-      <div style="color:var(--muted); font-size:0.85rem; font-weight:700;">SALDO ATUAL EM CAIXA:</div>
-      <div id="lblCaixaAtualAba" class="verde" style="font-size:1.8rem; font-weight:800; margin:6px 0 16px;">R$ 0,00</div>
-      <div class="campo">
-        <label>Definir / Atualizar Valor em Caixa (R$):</label>
-        <input id="entryCaixa" type="text" placeholder="0,00" style="max-width:260px;" />
+    <!-- ABA 4: SALDO EM CAIXA -->
+    <section id="aba-caixa" class="aba-conteudo">
+      <div class="card" style="max-width:620px; margin:20px auto; padding:24px;">
+        <div class="card-titulo ciano" style="font-size:1.1rem;">💵 CONTROLE DE SALDO EM CAIXA</div>
+        <div style="color:var(--muted); font-size:0.85rem; font-weight:700;">SALDO ATUAL EM CAIXA:</div>
+        <div id="lblCaixaAtualAba" class="verde" style="font-size:1.8rem; font-weight:800; margin:6px 0 16px;">R$ 0,00</div>
+        <div class="campo">
+          <label>Definir / Atualizar Valor em Caixa (R$):</label>
+          <input id="entryCaixa" type="text" placeholder="0,00" style="max-width:260px;" />
+        </div>
+        <button class="btn btn-ciano" onclick="atualizarCaixa()">💾 ATUALIZAR SALDO EM CAIXA</button>
       </div>
-      <button class="btn btn-ciano" onclick="atualizarCaixa()">💾 ATUALIZAR SALDO EM CAIXA</button>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <script>
     const HOJE = "{{ hoje }}";
-    let ultimoEstado = null;
+    let modoAuth = "login";
     let chartBarras = null;
     let chartRosca = null;
-    let chartComp = null;
-    let chartCat = null;
 
     function moeda(v) {
       return "R$ " + Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -652,127 +566,143 @@
       const el = document.getElementById("mensagemAviso");
       el.textContent = texto;
       el.className = "aviso " + tipo;
-      setTimeout(() => { el.className = "aviso"; }, 4500);
+      setTimeout(() => { el.className = "aviso"; }, 4000);
+    }
+
+    function alternarModoAuth(modo) {
+      modoAuth = modo;
+      const btnLogin = document.getElementById("tabBtnLogin");
+      const btnReg = document.getElementById("tabBtnRegistrar");
+      const btnSubmit = document.getElementById("btnSubmitAuth");
+      const inputSenha = document.getElementById("authSenha");
+
+      if (modo === "login") {
+        btnLogin.className = "btn btn-ciano";
+        btnReg.className = "btn btn-neutro";
+        btnSubmit.className = "btn btn-verde";
+        btnSubmit.textContent = "ENTRAR NO PAINEL";
+        inputSenha.setAttribute("autocomplete", "current-password");
+      } else {
+        btnReg.className = "btn btn-ciano";
+        btnLogin.className = "btn btn-neutro";
+        btnSubmit.className = "btn btn-amarelo";
+        btnSubmit.textContent = "CRIAR MINHA CONTA";
+        inputSenha.setAttribute("autocomplete", "new-password");
+      }
+    }
+
+    function exibirTelaAutenticacao(emailUsuario = null) {
+      const authSec = document.getElementById("telaAuth");
+      const painelSec = document.getElementById("painelPrincipal");
+      const ctrlTopo = document.getElementById("controlesLogado");
+      const badge = document.getElementById("badgeUsuario");
+
+      if (emailUsuario) {
+        authSec.style.display = "none";
+        painelSec.style.display = "block";
+        ctrlTopo.style.display = "flex";
+        badge.textContent = `👤 ${emailUsuario}`;
+      } else {
+        authSec.style.display = "block";
+        painelSec.style.display = "none";
+        ctrlTopo.style.display = "none";
+        badge.textContent = "";
+      }
+    }
+
+    async function enviarAuth(event) {
+      event.preventDefault();
+      const email = document.getElementById("authEmail").value.trim();
+      const senha = document.getElementById("authSenha").value;
+      const endpoint = modoAuth === "login" ? "/api/login" : "/api/registrar";
+
+      const resp = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        mostrarAviso(data.erro || "Falha na autenticação.", "erro");
+        return;
+      }
+
+      document.getElementById("authSenha").value = "";
+      exibirTelaAutenticacao(data.usuario_email);
+      if (data.estado) {
+        renderizarEstado(data.estado);
+      } else {
+        await carregarEstado();
+      }
+      mostrarAviso(modoAuth === "login" ? "Bem-vindo de volta!" : "Conta criada com sucesso!");
+    }
+
+    async function fazerLogout() {
+      await fetch("/api/logout", { method: "POST" });
+      if (chartBarras) { chartBarras.destroy(); chartBarras = null; }
+      if (chartRosca) { chartRosca.destroy(); chartRosca = null; }
+      exibirTelaAutenticacao(null);
+      mostrarAviso("Você saiu da conta.");
     }
 
     function trocarAba(nome, btn) {
       document.querySelectorAll(".aba-conteudo").forEach(sec => sec.classList.remove("ativa"));
       document.querySelectorAll(".aba-btn").forEach(b => b.classList.remove("ativa"));
       document.getElementById("aba-" + nome).classList.add("ativa");
-      if (btn) btn.classList.add("ativa");
-
-      if (nome === "resumo" && ultimoEstado) {
-        setTimeout(() => atualizarGraficos(ultimoEstado), 40);
+      btn.classList.add("ativa");
+      if (nome === "resumo") {
+        if (chartBarras) chartBarras.resize();
+        if (chartRosca) chartRosca.resize();
       }
     }
 
-    async function fazerLogin() {
-      const senha = document.getElementById("senhaAcesso").value;
-      const resp = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senha }),
-      });
-      const data = await resp.json();
-      if (!resp.ok) {
-        mostrarAviso(data.erro || "Falha no login", "erro");
-        return;
+    function formatarLista(itens, prefixo) {
+      if (!itens || itens.length === 0) {
+        return "        Nenhum registro encontrado para o filtro selecionado.\n";
       }
-      document.getElementById("modalLogin").classList.remove("visivel");
-      document.getElementById("senhaAcesso").value = "";
-      carregarEstado();
+      let out = `${"Nº".padEnd(5)} ${"Data".padEnd(12)} ${"Descrição".padEnd(28)} ${"Valor".padStart(14)}\n`;
+      out += "─".repeat(62) + "\n";
+      for (const item of itens) {
+        const desc = String(item.descricao || "").slice(0, 28).padEnd(28);
+        const val = `${prefixo}R$ ${Number(item.valor || 0).toFixed(2).padStart(9)}`;
+        out += `${String(item.idx).padEnd(5)} ${String(item.data || "").padEnd(12)} ${desc}  ${val}\n`;
+      }
+      return out;
     }
 
-    async function fazerLogout() {
-      await fetch("/api/logout", { method: "POST" });
-      carregarEstado();
-    }
-
-    function renderTabelaGanhos(itens) {
-      const tbody = document.getElementById("corpoGanhos");
-      if (!itens || !itens.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted);text-align:center;">Nenhum ganho no período.</td></tr>`;
-        return;
+    function formatarFixos(itens) {
+      if (!itens || itens.length === 0) {
+        return "        Nenhum gasto fixo cadastrado.\n";
       }
-      tbody.innerHTML = itens.map(item => `
-        <tr>
-          <td>${item.idx}</td>
-          <td>${item.data || ""}</td>
-          <td>${item.descricao || ""}</td>
-          <td class="verde">+${moeda(item.valor)}</td>
-          <td>
-            <div class="acoes-td">
-              <button class="btn btn-neutro btn-sm" onclick="editarGanho(${item.idx}, '${encodeURIComponent(item.descricao || "")}', '${item.valor || 0}', '${encodeURIComponent(item.data || "")}')">Editar</button>
-              <button class="btn btn-vermelho btn-sm" onclick="removerRapido('1', ${item.idx})">Excluir</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
-    }
-
-    function renderTabelaGastos(itens) {
-      const tbody = document.getElementById("corpoGastos");
-      if (!itens || !itens.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;">Nenhum gasto no período.</td></tr>`;
-        return;
+      let out = `${"Nº".padEnd(5)} ${"Descrição".padEnd(34)} ${"Valor Mensal".padStart(16)}\n`;
+      out += "─".repeat(60) + "\n";
+      for (const item of itens) {
+        const desc = String(item.descricao || "").slice(0, 34).padEnd(34);
+        const val = `-R$ ${Number(item.valor || 0).toFixed(2).padStart(9)}`;
+        out += `${String(item.idx).padEnd(5)} ${desc}  ${val}\n`;
       }
-      tbody.innerHTML = itens.map(item => `
-        <tr>
-          <td>${item.idx}</td>
-          <td>${item.data || ""}</td>
-          <td>${item.descricao || ""}</td>
-          <td><span class="ciano">${item.categoria || "Geral"}</span></td>
-          <td class="vermelho">-${moeda(item.valor)}</td>
-          <td>
-            <div class="acoes-td">
-              <button class="btn btn-neutro btn-sm" onclick="editarGasto(${item.idx}, '${encodeURIComponent(item.descricao || "")}', '${item.valor || 0}', '${encodeURIComponent(item.data || "")}', '${encodeURIComponent(item.categoria || "Geral")}')">Editar</button>
-              <button class="btn btn-vermelho btn-sm" onclick="removerRapido('2', ${item.idx})">Excluir</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
-    }
-
-    function renderTabelaFixos(itens) {
-      const tbody = document.getElementById("corpoFixos");
-      if (!itens || !itens.length) {
-        tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted);text-align:center;">Nenhum gasto fixo cadastrado.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = itens.map(item => `
-        <tr>
-          <td>${item.idx}</td>
-          <td>${item.descricao || ""}</td>
-          <td class="amarelo">-${moeda(item.valor)}</td>
-          <td>
-            <div class="acoes-td">
-              <button class="btn btn-neutro btn-sm" onclick="editarFixo(${item.idx}, '${encodeURIComponent(item.descricao || "")}', '${item.valor || 0}')">Editar</button>
-              <button class="btn btn-vermelho btn-sm" onclick="removerFixoRapido(${item.idx})">Excluir</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
+      return out;
     }
 
     function atualizarGraficos(dados) {
-      if (typeof Chart === "undefined") return;
-
       const topGastos = dados.top_gastos || [];
-      const labelsBar = topGastos.length ? topGastos.map(x => String(x.descricao || "").slice(0, 18)) : ["Sem gastos"];
-      const valoresBar = topGastos.length ? topGastos.map(x => Number(x.valor || 0)) : [0];
-      const paletaBar = ["#8b5cf6", "#3b82f6", "#00e5ff", "#06b6d4", "#f97316", "#fbbf24", "#ff4d6d"];
+      const labelsBar = topGastos.map(x => x.descricao.slice(0, 18));
+      const valoresBar = topGastos.map(x => Number(x.valor || 0));
+      const coresBar = ["#8b5cf6", "#3b82f6", "#00e5ff", "#06b6d4", "#f97316", "#fbbf24", "#ff4d6d"].slice(-valoresBar.length);
 
       document.getElementById("tituloGraficoBar").textContent = `TOP GASTOS • ${dados.periodo}`;
 
       if (chartBarras) chartBarras.destroy();
-      chartBarras = new Chart(document.getElementById("graficoBarras").getContext("2d"), {
+      const ctxBar = document.getElementById("graficoBarras").getContext("2d");
+      chartBarras = new Chart(ctxBar, {
         type: "bar",
         data: {
-          labels: labelsBar,
+          labels: labelsBar.length ? labelsBar : ["Sem gastos no período"],
           datasets: [{
             label: "Valor (R$)",
-            data: valoresBar,
-            backgroundColor: topGastos.length ? paletaBar.slice(0, valoresBar.length) : ["#334155"],
+            data: valoresBar.length ? valoresBar : [0],
+            backgroundColor: coresBar.length ? coresBar : ["#1e293b"],
             borderColor: "#00e5ff",
             borderWidth: 1,
           }],
@@ -781,32 +711,32 @@
           indexAxis: "y",
           responsive: true,
           maintainAspectRatio: false,
-          animation: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { beginAtZero: true, ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
+            x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
             y: { ticks: { color: "#e2e8f0", font: { weight: "bold" } }, grid: { display: false } },
           },
         },
       });
 
       const ativos = [];
-      if (Number(dados.total_ganhos || 0) > 0) ativos.push({ l: "Ganhos", v: Number(dados.total_ganhos), c: "#10b981" });
-      if (Number(dados.total_gastos || 0) > 0) ativos.push({ l: "Gastos Diários", v: Number(dados.total_gastos), c: "#ff4d6d" });
-      if (Number(dados.total_fixos || 0) > 0) ativos.push({ l: "Fixos Mensais", v: Number(dados.total_fixos), c: "#fbbf24" });
+      if (dados.total_ganhos > 0) ativos.push({ l: "Ganhos", v: dados.total_ganhos, c: "#10b981" });
+      if (dados.total_gastos > 0) ativos.push({ l: "Gastos Diários", v: dados.total_gastos, c: "#ff4d6d" });
+      if (dados.total_fixos > 0) ativos.push({ l: "Fixos Mensais", v: dados.total_fixos, c: "#fbbf24" });
 
       const centroEl = document.getElementById("sobraLiquidaCentro");
       centroEl.textContent = "R$ " + Math.round(Number(dados.sobra_apos_fixos || 0)).toLocaleString("pt-BR");
       centroEl.className = Number(dados.sobra_apos_fixos || 0) >= 0 ? "verde" : "vermelho";
 
       if (chartRosca) chartRosca.destroy();
-      chartRosca = new Chart(document.getElementById("graficoRosca").getContext("2d"), {
+      const ctxRosca = document.getElementById("graficoRosca").getContext("2d");
+      chartRosca = new Chart(ctxRosca, {
         type: "doughnut",
         data: {
           labels: ativos.length ? ativos.map(a => a.l) : ["Sem movimentação"],
           datasets: [{
             data: ativos.length ? ativos.map(a => a.v) : [1],
-            backgroundColor: ativos.length ? ativos.map(a => a.c) : ["#334155"],
+            backgroundColor: ativos.length ? ativos.map(a => a.c) : ["#1e293b"],
             borderColor: "#111827",
             borderWidth: 3,
           }],
@@ -814,71 +744,18 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          animation: false,
           cutout: "62%",
-          plugins: { legend: { labels: { color: "#e2e8f0", font: { weight: "bold" } } } },
-        },
-      });
-
-      const cats = dados.gastos_por_categoria || [];
-      if (chartCat) chartCat.destroy();
-      chartCat = new Chart(document.getElementById("graficoCategorias").getContext("2d"), {
-        type: "bar",
-        data: {
-          labels: cats.length ? cats.map(c => c.categoria) : ["Sem categorias"],
-          datasets: [{
-            label: "R$",
-            data: cats.length ? cats.map(c => Number(c.valor || 0)) : [0],
-            backgroundColor: cats.length ? ["#00e5ff", "#8b5cf6", "#fbbf24", "#10b981", "#ff4d6d", "#3b82f6"] : ["#334155"],
-            borderRadius: 6,
-          }],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: "#e2e8f0", font: { weight: "bold" } }, grid: { display: false } },
-            y: { beginAtZero: true, ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
-          },
-        },
-      });
-
-      if (chartComp) chartComp.destroy();
-      chartComp = new Chart(document.getElementById("graficoComparativo").getContext("2d"), {
-        type: "bar",
-        data: {
-          labels: ["Caixa", "Ganhos", "Gastos", "Fixos", "Sobra"],
-          datasets: [{
-            label: "R$",
-            data: [
-              Number(dados.saldo_em_caixa || 0),
-              Number(dados.total_ganhos || 0),
-              Number(dados.total_gastos || 0),
-              Number(dados.total_fixos || 0),
-              Number(dados.sobra_apos_fixos || 0),
-            ],
-            backgroundColor: ["#00e5ff", "#10b981", "#ff4d6d", "#fbbf24", "#8b5cf6"],
-            borderRadius: 6,
-          }],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: "#e2e8f0", font: { weight: "bold" } }, grid: { display: false } },
-            y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
+          plugins: {
+            legend: { labels: { color: "#e2e8f0", font: { weight: "bold" } } },
           },
         },
       });
     }
 
     function renderizarEstado(dados) {
-      ultimoEstado = dados;
-      document.getElementById("btnSair").style.display = dados.senha_ativa ? "inline-flex" : "none";
+      if (dados.usuario_email) {
+        document.getElementById("badgeUsuario").textContent = `👤 ${dados.usuario_email}`;
+      }
 
       const sel = document.getElementById("filtroPeriodo");
       const atual = dados.periodo || "Todos";
@@ -899,9 +776,9 @@
       sobraEl.textContent = `⚡ SALDO: ${moeda(dados.saldo_disponivel)}`;
       sobraEl.className = Number(dados.saldo_disponivel || 0) >= 0 ? "verde" : "vermelho";
 
-      renderTabelaGanhos(dados.ganhos || []);
-      renderTabelaGastos(dados.gastos || []);
-      renderTabelaFixos(dados.fixos || []);
+      document.getElementById("listaGanhos").textContent = formatarLista(dados.ganhos, "+");
+      document.getElementById("listaGastos").textContent = formatarLista(dados.gastos, "-");
+      document.getElementById("listaFixos").textContent = formatarFixos(dados.fixos);
 
       document.getElementById("resCaixa").textContent = moeda(dados.saldo_em_caixa);
       document.getElementById("resGanhosLabel").textContent = `📈 GANHOS (${atual})`;
@@ -919,41 +796,8 @@
       mensalEl.textContent = moeda(dados.sobra_apos_fixos);
       mensalEl.className = "valor " + (Number(dados.sobra_apos_fixos || 0) >= 0 ? "verde" : "vermelho");
 
-      const ganhosNum = Number(dados.total_ganhos || 0);
-      const sobraNum = Number(dados.sobra_apos_fixos || 0);
-      document.getElementById("resMargem").textContent = ganhosNum > 0 ? ((sobraNum / ganhosNum) * 100).toFixed(1) + "%" : "0,0%";
-
-      const topG = (dados.top_gastos && dados.top_gastos.length) ? dados.top_gastos[0] : null;
-      document.getElementById("resMaiorGasto").textContent = topG ? `${topG.descricao} (${moeda(topG.valor)})` : "—";
-
-      const listaG = dados.gastos || [];
-      const mediaG = listaG.length ? Number(dados.total_gastos || 0) / listaG.length : 0;
-      document.getElementById("resMediaGasto").textContent = moeda(mediaG);
-
-      const meta = Number(dados.meta_mensal || 0);
-      const gastosNum = Number(dados.total_gastos || 0);
-      const barra = document.getElementById("barraMetaFill");
-      const statusMeta = document.getElementById("textoMetaStatus");
-      if (meta > 0) {
-        const pct = Math.min(100, (gastosNum / meta) * 100);
-        const pctReal = ((gastosNum / meta) * 100).toFixed(1);
-        barra.style.width = pct + "%";
-        if (gastosNum > meta) {
-          barra.style.background = "var(--vermelho)";
-          statusMeta.innerHTML = `<span class="vermelho">⚠️ Meta ultrapassada!</span> Gasto de ${moeda(gastosNum)} de ${moeda(meta)} (${pctReal}%).`;
-        } else if (pct >= 80) {
-          barra.style.background = "var(--amarelo)";
-          statusMeta.innerHTML = `<span class="amarelo">⚡ Atenção:</span> ${pctReal}% da meta consumida (${moeda(gastosNum)} de ${moeda(meta)}).`;
-        } else {
-          barra.style.background = "var(--verde)";
-          statusMeta.innerHTML = `<span class="verde">✅ Dentro da meta:</span> ${pctReal}% consumido (${moeda(gastosNum)} de ${moeda(meta)}).`;
-        }
-      } else {
-        barra.style.width = "0%";
-        statusMeta.textContent = "Nenhuma meta mensal definida.";
-      }
-
       document.getElementById("lblCaixaAtualAba").textContent = moeda(dados.saldo_em_caixa);
+
       atualizarGraficos(dados);
     }
 
@@ -961,12 +805,23 @@
       const periodo = document.getElementById("filtroPeriodo").value || "Todos";
       const resp = await fetch(`/api/estado?periodo=${encodeURIComponent(periodo)}`);
       if (resp.status === 401) {
-        document.getElementById("modalLogin").classList.add("visivel");
+        exibirTelaAutenticacao(null);
         return;
       }
-      document.getElementById("modalLogin").classList.remove("visivel");
       const dados = await resp.json();
+      exibirTelaAutenticacao(dados.usuario_email || "Usuário");
       renderizarEstado(dados);
+    }
+
+    async function iniciarApp() {
+      const resp = await fetch("/api/sessao");
+      const sessao = await resp.json();
+      if (sessao.autenticado) {
+        exibirTelaAutenticacao(sessao.usuario_email);
+        await carregarEstado();
+      } else {
+        exibirTelaAutenticacao(null);
+      }
     }
 
     async function enviarAcao(url, payload, msgSucesso) {
@@ -977,7 +832,8 @@
         body: JSON.stringify(payload),
       });
       if (resp.status === 401) {
-        document.getElementById("modalLogin").classList.add("visivel");
+        exibirTelaAutenticacao(null);
+        mostrarAviso("Sua sessão expirou. Faça login novamente.", "erro");
         return false;
       }
       const data = await resp.json();
@@ -995,7 +851,7 @@
         descricao: document.getElementById("descGanho").value,
         valor: document.getElementById("valGanho").value,
         data: document.getElementById("dataGanho").value,
-      }, "Ganho adicionado!");
+      });
       if (ok) {
         document.getElementById("descGanho").value = "";
         document.getElementById("valGanho").value = "";
@@ -1006,10 +862,9 @@
     async function adicionarGasto() {
       const ok = await enviarAcao("/api/gastos", {
         descricao: document.getElementById("descGasto").value,
-        categoria: document.getElementById("catGasto").value,
         valor: document.getElementById("valGasto").value,
         data: document.getElementById("dataGasto").value,
-      }, "Gasto adicionado!");
+      });
       if (ok) {
         document.getElementById("descGasto").value = "";
         document.getElementById("valGasto").value = "";
@@ -1017,85 +872,40 @@
       }
     }
 
-    async function removerRapido(tipo, numero) {
-      await enviarAcao("/api/lancamentos/remover", { tipo, numero }, "Lançamento removido!");
-    }
-
-    async function editarGanho(idx, descEnc, valorAtual, dataEnc) {
-      const descricao = prompt("Nova descrição:", decodeURIComponent(descEnc));
-      if (descricao === null) return;
-      const valor = prompt("Novo valor (R$):", String(valorAtual));
-      if (valor === null) return;
-      const data = prompt("Nova data (DD/MM/AAAA):", decodeURIComponent(dataEnc));
-      if (data === null) return;
-      await enviarAcao("/api/lancamentos/editar", { tipo: "ganho", idx, descricao, valor, data }, "Ganho atualizado!");
-    }
-
-    async function editarGasto(idx, descEnc, valorAtual, dataEnc, catEnc) {
-      const descricao = prompt("Nova descrição:", decodeURIComponent(descEnc));
-      if (descricao === null) return;
-      const categoria = prompt("Nova categoria:", decodeURIComponent(catEnc));
-      if (categoria === null) return;
-      const valor = prompt("Novo valor (R$):", String(valorAtual));
-      if (valor === null) return;
-      const data = prompt("Nova data (DD/MM/AAAA):", decodeURIComponent(dataEnc));
-      if (data === null) return;
-      await enviarAcao("/api/lancamentos/editar", { tipo: "gasto", idx, descricao, categoria, valor, data }, "Gasto atualizado!");
+    async function removerLancamento() {
+      const ok = await enviarAcao("/api/lancamentos/remover", {
+        tipo: document.getElementById("tipoDel").value,
+        numero: document.getElementById("numDel").value,
+      }, "Lançamento removido!");
+      if (ok) document.getElementById("numDel").value = "";
     }
 
     async function adicionarFixo() {
       const ok = await enviarAcao("/api/fixos", {
         descricao: document.getElementById("descFixo").value,
         valor: document.getElementById("valFixo").value,
-      }, "Gasto fixo adicionado!");
+      });
       if (ok) {
         document.getElementById("descFixo").value = "";
         document.getElementById("valFixo").value = "";
       }
     }
 
-    async function editarFixo(idx, descEnc, valorAtual) {
-      const descricao = prompt("Nova descrição do gasto fixo:", decodeURIComponent(descEnc));
-      if (descricao === null) return;
-      const valor = prompt("Novo valor mensal (R$):", String(valorAtual));
-      if (valor === null) return;
-      await enviarAcao("/api/fixos/editar", { idx, descricao, valor }, "Gasto fixo atualizado!");
-    }
-
-    async function removerFixoRapido(numero) {
-      await enviarAcao("/api/fixos/remover", { numero }, "Gasto fixo removido!");
+    async function removerFixo() {
+      const ok = await enviarAcao("/api/fixos/remover", {
+        numero: document.getElementById("numFixoDel").value,
+      }, "Gasto fixo removido!");
+      if (ok) document.getElementById("numFixoDel").value = "";
     }
 
     async function atualizarCaixa() {
       const ok = await enviarAcao("/api/caixa", {
         valor: document.getElementById("entryCaixa").value,
-      }, "Saldo em caixa atualizado!");
+      }, "Saldo em caixa atualizado com sucesso!");
       if (ok) document.getElementById("entryCaixa").value = "";
     }
 
-    async function salvarMeta() {
-      const ok = await enviarAcao("/api/meta", {
-        meta_mensal: document.getElementById("inputMetaMensal").value,
-      }, "Meta mensal salva!");
-      if (ok) document.getElementById("inputMetaMensal").value = "";
-    }
-
-    async function importarArquivo(input) {
-      if (!input.files || !input.files.length) return;
-      const formData = new FormData();
-      formData.append("arquivo", input.files[0]);
-      const resp = await fetch("/api/importar", { method: "POST", body: formData });
-      const data = await resp.json();
-      input.value = "";
-      if (!resp.ok) {
-        mostrarAviso(data.erro || "Erro ao importar", "erro");
-        return;
-      }
-      renderizarEstado(data.estado);
-      mostrarAviso("Backup importado com sucesso!", "ok");
-    }
-
-    carregarEstado();
+    iniciarApp();
   </script>
 </body>
 </html>

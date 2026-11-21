@@ -55,12 +55,23 @@
     .controles-topo {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
     }
 
     .controles-topo label {
       color: var(--muted);
       font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .usuario-badge {
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 6px;
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      color: var(--ciano);
       font-weight: 700;
     }
 
@@ -313,184 +324,237 @@
       border: 1px solid var(--verde);
       color: #d1fae5;
     }
+
+    /* Tela de Login / Cadastro */
+    .auth-wrapper {
+      max-width: 420px;
+      margin: 48px auto;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .auth-sub {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
   <div class="topo">
     <div class="titulo">◆ NEXUS FINANCE ◆</div>
-    <div class="controles-topo">
+    <div class="controles-topo" id="controlesLogado" style="display: none;">
+      <span id="badgeUsuario" class="usuario-badge"></span>
       <label for="filtroPeriodo">PERÍODO:</label>
       <select id="filtroPeriodo" onchange="carregarEstado()">
         <option value="Todos">Todos</option>
       </select>
       <a class="btn btn-csv" href="/exportar.csv">⬇ EXPORTAR CSV</a>
+      <button class="btn btn-neutro" onclick="fazerLogout()">SAIR</button>
     </div>
   </div>
 
   <div id="mensagemAviso" class="aviso"></div>
 
-  <div class="abas">
-    <button class="aba-btn ativa" onclick="trocarAba('diario', this)">📅 LANÇAMENTOS DIÁRIOS</button>
-    <button class="aba-btn" onclick="trocarAba('fixos', this)">🔄 GASTOS FIXOS MENSAIS</button>
-    <button class="aba-btn" onclick="trocarAba('resumo', this)">📊 RESUMO & GRÁFICO</button>
-    <button class="aba-btn" onclick="trocarAba('caixa', this)">💵 SALDO EM CAIXA</button>
-  </div>
+  <!-- TELA DE LOGIN / CADASTRO -->
+  <section id="telaAuth" class="auth-wrapper" style="display: none;">
+    <div class="card" style="padding: 22px;">
+      <div class="card-titulo ciano" style="font-size: 1.1rem; margin-bottom: 6px;">🔐 ACESSO À CONTA</div>
+      <p class="auth-sub">
+        Cada pessoa tem sua própria conta e seus dados ficam isolados. Entre ou crie uma conta nova (mínimo de 6 caracteres na senha).
+      </p>
 
-  <!-- ABA 1: LANÇAMENTOS DIÁRIOS -->
-  <section id="aba-diario" class="aba-conteudo ativa">
-    <div class="grid-diario">
-      <div>
-        <div class="card">
-          <div class="card-titulo verde">💰 REGISTRAR GANHO</div>
-          <div class="campo">
-            <label>Descrição</label>
-            <input id="descGanho" type="text" placeholder="Ex: Salário, Freelance" />
-          </div>
-          <div class="campo">
-            <label>Valor R$</label>
-            <input id="valGanho" type="text" placeholder="0,00" />
-          </div>
-          <div class="campo">
-            <label>Data (DD/MM/AAAA)</label>
-            <input id="dataGanho" type="text" value="{{ hoje }}" />
-          </div>
-          <button class="btn btn-verde" style="width:100%" onclick="adicionarGanho()">➕ ADICIONAR GANHO</button>
-        </div>
-
-        <div class="card">
-          <div class="card-titulo vermelho">💸 REGISTRAR GASTO</div>
-          <div class="campo">
-            <label>Descrição (ex: Mercado, Restaurante)</label>
-            <input id="descGasto" type="text" placeholder="Ex: Mercado" />
-          </div>
-          <div class="campo">
-            <label>Valor R$</label>
-            <input id="valGasto" type="text" placeholder="0,00" />
-          </div>
-          <div class="campo">
-            <label>Data (DD/MM/AAAA)</label>
-            <input id="dataGasto" type="text" value="{{ hoje }}" />
-          </div>
-          <button class="btn btn-vermelho" style="width:100%" onclick="adicionarGasto()">➖ ADICIONAR GASTO</button>
-        </div>
-
-        <div class="card">
-          <div class="card-titulo amarelo">🗑️ REMOVER LANÇAMENTO</div>
-          <div class="campo">
-            <label>Tipo: 1=Ganho  2=Gasto</label>
-            <input id="tipoDel" type="text" value="2" style="width:80px" />
-          </div>
-          <div class="campo">
-            <label>Número do item (Nº)</label>
-            <input id="numDel" type="text" style="width:80px" />
-          </div>
-          <button class="btn btn-amarelo" style="width:100%" onclick="removerLancamento()">REMOVER ITEM</button>
-        </div>
+      <div class="auth-tabs">
+        <button id="tabBtnLogin" class="btn btn-ciano" onclick="alternarModoAuth('login')">ENTRAR</button>
+        <button id="tabBtnRegistrar" class="btn btn-neutro" onclick="alternarModoAuth('registrar')">CRIAR CONTA</button>
       </div>
 
-      <div>
-        <div class="resumo-barra">
-          <span id="lblTotalG" class="verde">📈 GANHOS: R$ 0,00</span>
-          <span id="lblTotalGa" class="vermelho">📉 GASTOS: R$ 0,00</span>
-          <span id="lblFixosTotal" class="amarelo">🔄 FIXOS: R$ 0,00</span>
-          <span id="lblSobra" class="ciano">⚡ SALDO: R$ 0,00</span>
+      <form id="formAuth" onsubmit="enviarAuth(event)">
+        <div class="campo">
+          <label for="authEmail">E-mail</label>
+          <input id="authEmail" type="email" placeholder="voce@exemplo.com" required autocomplete="email" />
         </div>
-
-        <div class="card">
-          <div class="card-titulo verde">📈 HISTÓRICO DE GANHOS</div>
-          <div id="listaGanhos" class="historico-box"></div>
+        <div class="campo" style="margin-bottom: 14px;">
+          <label for="authSenha">Senha</label>
+          <input id="authSenha" type="password" placeholder="••••••••" required autocomplete="current-password" />
         </div>
-
-        <div class="card">
-          <div class="card-titulo vermelho">📉 HISTÓRICO DE GASTOS</div>
-          <div id="listaGastos" class="historico-box"></div>
-        </div>
-      </div>
+        <button id="btnSubmitAuth" type="submit" class="btn btn-verde" style="width: 100%;">ENTRAR NO PAINEL</button>
+      </form>
     </div>
   </section>
 
-  <!-- ABA 2: GASTOS FIXOS MENSAIS -->
-  <section id="aba-fixos" class="aba-conteudo">
-    <div class="grid-diario">
-      <div>
-        <div class="card">
-          <div class="card-titulo amarelo">🔄 NOVO GASTO FIXO</div>
-          <div class="campo">
-            <label>Descrição (ex: Aluguel, Internet, SaaS)</label>
-            <input id="descFixo" type="text" />
+  <!-- PAINEL PRINCIPAL -->
+  <main id="painelPrincipal" style="display: none;">
+    <div class="abas">
+      <button class="aba-btn ativa" onclick="trocarAba('diario', this)">📅 LANÇAMENTOS DIÁRIOS</button>
+      <button class="aba-btn" onclick="trocarAba('fixos', this)">🔄 GASTOS FIXOS MENSAIS</button>
+      <button class="aba-btn" onclick="trocarAba('resumo', this)">📊 RESUMO & GRÁFICO</button>
+      <button class="aba-btn" onclick="trocarAba('caixa', this)">💵 SALDO EM CAIXA</button>
+    </div>
+
+    <!-- ABA 1: LANÇAMENTOS DIÁRIOS -->
+    <section id="aba-diario" class="aba-conteudo ativa">
+      <div class="grid-diario">
+        <div>
+          <div class="card">
+            <div class="card-titulo verde">💰 REGISTRAR GANHO</div>
+            <div class="campo">
+              <label>Descrição</label>
+              <input id="descGanho" type="text" placeholder="Ex: Salário, Freelance" />
+            </div>
+            <div class="campo">
+              <label>Valor R$</label>
+              <input id="valGanho" type="text" placeholder="0,00" />
+            </div>
+            <div class="campo">
+              <label>Data (DD/MM/AAAA)</label>
+              <input id="dataGanho" type="text" value="{{ hoje }}" />
+            </div>
+            <button class="btn btn-verde" style="width:100%" onclick="adicionarGanho()">➕ ADICIONAR GANHO</button>
           </div>
-          <div class="campo">
-            <label>Valor Mensal R$</label>
-            <input id="valFixo" type="text" placeholder="0,00" />
+
+          <div class="card">
+            <div class="card-titulo vermelho">💸 REGISTRAR GASTO</div>
+            <div class="campo">
+              <label>Descrição (ex: Mercado, Restaurante)</label>
+              <input id="descGasto" type="text" placeholder="Ex: Mercado" />
+            </div>
+            <div class="campo">
+              <label>Valor R$</label>
+              <input id="valGasto" type="text" placeholder="0,00" />
+            </div>
+            <div class="campo">
+              <label>Data (DD/MM/AAAA)</label>
+              <input id="dataGasto" type="text" value="{{ hoje }}" />
+            </div>
+            <button class="btn btn-vermelho" style="width:100%" onclick="adicionarGasto()">➖ ADICIONAR GASTO</button>
           </div>
-          <button class="btn btn-amarelo" style="width:100%" onclick="adicionarFixo()">➕ ADICIONAR GASTO FIXO</button>
+
+          <div class="card">
+            <div class="card-titulo amarelo">🗑️ REMOVER LANÇAMENTO</div>
+            <div class="campo">
+              <label>Tipo: 1=Ganho  2=Gasto</label>
+              <input id="tipoDel" type="text" value="2" style="width:80px" />
+            </div>
+            <div class="campo">
+              <label>Número do item (Nº)</label>
+              <input id="numDel" type="text" style="width:80px" />
+            </div>
+            <button class="btn btn-amarelo" style="width:100%" onclick="removerLancamento()">REMOVER ITEM</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="resumo-barra">
+            <span id="lblTotalG" class="verde">📈 GANHOS: R$ 0,00</span>
+            <span id="lblTotalGa" class="vermelho">📉 GASTOS: R$ 0,00</span>
+            <span id="lblFixosTotal" class="amarelo">🔄 FIXOS: R$ 0,00</span>
+            <span id="lblSobra" class="ciano">⚡ SALDO: R$ 0,00</span>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo verde">📈 HISTÓRICO DE GANHOS</div>
+            <div id="listaGanhos" class="historico-box"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo vermelho">📉 HISTÓRICO DE GASTOS</div>
+            <div id="listaGastos" class="historico-box"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 2: GASTOS FIXOS MENSAIS -->
+    <section id="aba-fixos" class="aba-conteudo">
+      <div class="grid-diario">
+        <div>
+          <div class="card">
+            <div class="card-titulo amarelo">🔄 NOVO GASTO FIXO</div>
+            <div class="campo">
+              <label>Descrição (ex: Aluguel, Internet, SaaS)</label>
+              <input id="descFixo" type="text" />
+            </div>
+            <div class="campo">
+              <label>Valor Mensal R$</label>
+              <input id="valFixo" type="text" placeholder="0,00" />
+            </div>
+            <button class="btn btn-amarelo" style="width:100%" onclick="adicionarFixo()">➕ ADICIONAR GASTO FIXO</button>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo ciano">🗑️ REMOVER GASTO FIXO</div>
+            <div class="campo">
+              <label>Número do gasto fixo</label>
+              <input id="numFixoDel" type="text" style="width:90px" />
+            </div>
+            <button class="btn btn-neutro" style="width:100%" onclick="removerFixo()">REMOVER FIXO</button>
+          </div>
         </div>
 
         <div class="card">
-          <div class="card-titulo ciano">🗑️ REMOVER GASTO FIXO</div>
-          <div class="campo">
-            <label>Número do gasto fixo</label>
-            <input id="numFixoDel" type="text" style="width:90px" />
+          <div class="card-titulo amarelo">📋 LISTA DE GASTOS FIXOS MENSAIS</div>
+          <div id="listaFixos" class="historico-box" style="min-height:360px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: RESUMO & GRÁFICO -->
+    <section id="aba-resumo" class="aba-conteudo">
+      <div class="cards-resumo">
+        <div class="mini-card ciano">💵 SALDO EM CAIXA<span id="resCaixa" class="valor">R$ 0,00</span></div>
+        <div class="mini-card verde"><span id="resGanhosLabel">📈 GANHOS</span><span id="resGanhos" class="valor">R$ 0,00</span></div>
+        <div class="mini-card vermelho"><span id="resGastosLabel">📉 GASTOS</span><span id="resGastos" class="valor">R$ 0,00</span></div>
+        <div class="mini-card">⚡ SALDO DISPONÍVEL<span id="resDisponivel" class="valor verde">R$ 0,00</span></div>
+        <div class="mini-card amarelo">🔄 FIXOS MENSAIS<span id="resFixos" class="valor">R$ 0,00</span></div>
+        <div class="mini-card">💎 SOBRA APÓS FIXOS<span id="resMensalFinal" class="valor verde">R$ 0,00</span></div>
+      </div>
+
+      <div class="grid-graficos">
+        <div>
+          <div id="tituloGraficoBar" class="grafico-titulo">TOP GASTOS • Todos</div>
+          <div class="grafico-box">
+            <canvas id="graficoBarras"></canvas>
           </div>
-          <button class="btn btn-neutro" style="width:100%" onclick="removerFixo()">REMOVER FIXO</button>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-titulo amarelo">📋 LISTA DE GASTOS FIXOS MENSAIS</div>
-        <div id="listaFixos" class="historico-box" style="min-height:360px"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABA 3: RESUMO & GRÁFICO -->
-  <section id="aba-resumo" class="aba-conteudo">
-    <div class="cards-resumo">
-      <div class="mini-card ciano">💵 SALDO EM CAIXA<span id="resCaixa" class="valor">R$ 0,00</span></div>
-      <div class="mini-card verde"><span id="resGanhosLabel">📈 GANHOS</span><span id="resGanhos" class="valor">R$ 0,00</span></div>
-      <div class="mini-card vermelho"><span id="resGastosLabel">📉 GASTOS</span><span id="resGastos" class="valor">R$ 0,00</span></div>
-      <div class="mini-card">⚡ SALDO DISPONÍVEL<span id="resDisponivel" class="valor verde">R$ 0,00</span></div>
-      <div class="mini-card amarelo">🔄 FIXOS MENSAIS<span id="resFixos" class="valor">R$ 0,00</span></div>
-      <div class="mini-card">💎 SOBRA APÓS FIXOS<span id="resMensalFinal" class="valor verde">R$ 0,00</span></div>
-    </div>
-
-    <div class="grid-graficos">
-      <div>
-        <div id="tituloGraficoBar" class="grafico-titulo">TOP GASTOS • Todos</div>
-        <div class="grafico-box">
-          <canvas id="graficoBarras"></canvas>
-        </div>
-      </div>
-
-      <div>
-        <div class="grafico-titulo">FLUXO FINANCEIRO</div>
-        <div class="grafico-box">
-          <canvas id="graficoRosca"></canvas>
-          <div class="sobra-centro">
-            <small>SOBRA LÍQUIDA</small>
-            <strong id="sobraLiquidaCentro" class="verde">R$ 0</strong>
+        <div>
+          <div class="grafico-titulo">FLUXO FINANCEIRO</div>
+          <div class="grafico-box">
+            <canvas id="graficoRosca"></canvas>
+            <div class="sobra-centro">
+              <small>SOBRA LÍQUIDA</small>
+              <strong id="sobraLiquidaCentro" class="verde">R$ 0</strong>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ABA 4: SALDO EM CAIXA -->
-  <section id="aba-caixa" class="aba-conteudo">
-    <div class="card" style="max-width:620px; margin:20px auto; padding:24px;">
-      <div class="card-titulo ciano" style="font-size:1.1rem;">💵 CONTROLE DE SALDO EM CAIXA</div>
-      <div style="color:var(--muted); font-size:0.85rem; font-weight:700;">SALDO ATUAL EM CAIXA:</div>
-      <div id="lblCaixaAtualAba" class="verde" style="font-size:1.8rem; font-weight:800; margin:6px 0 16px;">R$ 0,00</div>
-      <div class="campo">
-        <label>Definir / Atualizar Valor em Caixa (R$):</label>
-        <input id="entryCaixa" type="text" placeholder="0,00" style="max-width:260px;" />
+    <!-- ABA 4: SALDO EM CAIXA -->
+    <section id="aba-caixa" class="aba-conteudo">
+      <div class="card" style="max-width:620px; margin:20px auto; padding:24px;">
+        <div class="card-titulo ciano" style="font-size:1.1rem;">💵 CONTROLE DE SALDO EM CAIXA</div>
+        <div style="color:var(--muted); font-size:0.85rem; font-weight:700;">SALDO ATUAL EM CAIXA:</div>
+        <div id="lblCaixaAtualAba" class="verde" style="font-size:1.8rem; font-weight:800; margin:6px 0 16px;">R$ 0,00</div>
+        <div class="campo">
+          <label>Definir / Atualizar Valor em Caixa (R$):</label>
+          <input id="entryCaixa" type="text" placeholder="0,00" style="max-width:260px;" />
+        </div>
+        <button class="btn btn-ciano" onclick="atualizarCaixa()">💾 ATUALIZAR SALDO EM CAIXA</button>
       </div>
-      <button class="btn btn-ciano" onclick="atualizarCaixa()">💾 ATUALIZAR SALDO EM CAIXA</button>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <script>
     const HOJE = "{{ hoje }}";
+    let modoAuth = "login";
     let chartBarras = null;
     let chartRosca = null;
 
@@ -503,6 +567,83 @@
       el.textContent = texto;
       el.className = "aviso " + tipo;
       setTimeout(() => { el.className = "aviso"; }, 4000);
+    }
+
+    function alternarModoAuth(modo) {
+      modoAuth = modo;
+      const btnLogin = document.getElementById("tabBtnLogin");
+      const btnReg = document.getElementById("tabBtnRegistrar");
+      const btnSubmit = document.getElementById("btnSubmitAuth");
+      const inputSenha = document.getElementById("authSenha");
+
+      if (modo === "login") {
+        btnLogin.className = "btn btn-ciano";
+        btnReg.className = "btn btn-neutro";
+        btnSubmit.className = "btn btn-verde";
+        btnSubmit.textContent = "ENTRAR NO PAINEL";
+        inputSenha.setAttribute("autocomplete", "current-password");
+      } else {
+        btnReg.className = "btn btn-ciano";
+        btnLogin.className = "btn btn-neutro";
+        btnSubmit.className = "btn btn-amarelo";
+        btnSubmit.textContent = "CRIAR MINHA CONTA";
+        inputSenha.setAttribute("autocomplete", "new-password");
+      }
+    }
+
+    function exibirTelaAutenticacao(emailUsuario = null) {
+      const authSec = document.getElementById("telaAuth");
+      const painelSec = document.getElementById("painelPrincipal");
+      const ctrlTopo = document.getElementById("controlesLogado");
+      const badge = document.getElementById("badgeUsuario");
+
+      if (emailUsuario) {
+        authSec.style.display = "none";
+        painelSec.style.display = "block";
+        ctrlTopo.style.display = "flex";
+        badge.textContent = `👤 ${emailUsuario}`;
+      } else {
+        authSec.style.display = "block";
+        painelSec.style.display = "none";
+        ctrlTopo.style.display = "none";
+        badge.textContent = "";
+      }
+    }
+
+    async function enviarAuth(event) {
+      event.preventDefault();
+      const email = document.getElementById("authEmail").value.trim();
+      const senha = document.getElementById("authSenha").value;
+      const endpoint = modoAuth === "login" ? "/api/login" : "/api/registrar";
+
+      const resp = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        mostrarAviso(data.erro || "Falha na autenticação.", "erro");
+        return;
+      }
+
+      document.getElementById("authSenha").value = "";
+      exibirTelaAutenticacao(data.usuario_email);
+      if (data.estado) {
+        renderizarEstado(data.estado);
+      } else {
+        await carregarEstado();
+      }
+      mostrarAviso(modoAuth === "login" ? "Bem-vindo de volta!" : "Conta criada com sucesso!");
+    }
+
+    async function fazerLogout() {
+      await fetch("/api/logout", { method: "POST" });
+      if (chartBarras) { chartBarras.destroy(); chartBarras = null; }
+      if (chartRosca) { chartRosca.destroy(); chartRosca = null; }
+      exibirTelaAutenticacao(null);
+      mostrarAviso("Você saiu da conta.");
     }
 
     function trocarAba(nome, btn) {
@@ -612,6 +753,10 @@
     }
 
     function renderizarEstado(dados) {
+      if (dados.usuario_email) {
+        document.getElementById("badgeUsuario").textContent = `👤 ${dados.usuario_email}`;
+      }
+
       const sel = document.getElementById("filtroPeriodo");
       const atual = dados.periodo || "Todos";
       sel.innerHTML = "";
@@ -659,8 +804,24 @@
     async function carregarEstado() {
       const periodo = document.getElementById("filtroPeriodo").value || "Todos";
       const resp = await fetch(`/api/estado?periodo=${encodeURIComponent(periodo)}`);
+      if (resp.status === 401) {
+        exibirTelaAutenticacao(null);
+        return;
+      }
       const dados = await resp.json();
+      exibirTelaAutenticacao(dados.usuario_email || "Usuário");
       renderizarEstado(dados);
+    }
+
+    async function iniciarApp() {
+      const resp = await fetch("/api/sessao");
+      const sessao = await resp.json();
+      if (sessao.autenticado) {
+        exibirTelaAutenticacao(sessao.usuario_email);
+        await carregarEstado();
+      } else {
+        exibirTelaAutenticacao(null);
+      }
     }
 
     async function enviarAcao(url, payload, msgSucesso) {
@@ -670,6 +831,11 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (resp.status === 401) {
+        exibirTelaAutenticacao(null);
+        mostrarAviso("Sua sessão expirou. Faça login novamente.", "erro");
+        return false;
+      }
       const data = await resp.json();
       if (!resp.ok) {
         mostrarAviso(data.erro || "Erro na operação", "erro");
@@ -739,7 +905,7 @@
       if (ok) document.getElementById("entryCaixa").value = "";
     }
 
-    carregarEstado();
+    iniciarApp();
   </script>
 </body>
 </html>
