@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS FINANCE • Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <div class="brand">◆ NEXUS FINANCE ◆</div>
+    <p class="subtitle">Acesso seguro ao painel financeiro</p>
+
+    {% if erro %}
+      <div class="alert-err">{{ erro }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <label>Usuário</label>
+      <input type="text" name="username" required autofocus placeholder="ex: cliente" />
+
+      <label>Senha</label>
+      <input type="password" name="password" required placeholder="••••••••" />
+
+      <button type="submit" class="btn-ciano">ENTRAR NO PAINEL</button>
+    </form>
+  </div>
+</body>
+</html>
