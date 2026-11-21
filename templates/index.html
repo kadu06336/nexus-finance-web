@@ -55,7 +55,8 @@
     .controles-topo {
       display: flex;
       align-items: center;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .controles-topo label {
@@ -70,7 +71,7 @@
       border: 1px solid var(--borda);
       border-radius: 6px;
       padding: 7px 10px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       outline: none;
     }
 
@@ -82,7 +83,7 @@
       border: none;
       border-radius: 6px;
       padding: 8px 12px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 700;
       cursor: pointer;
       text-decoration: none;
@@ -90,6 +91,11 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.76rem;
     }
 
     .btn-csv {
@@ -174,7 +180,7 @@
       margin-bottom: 3px;
     }
 
-    .campo input {
+    .campo input, .campo select {
       width: 100%;
     }
 
@@ -193,17 +199,39 @@
       font-weight: 800;
     }
 
-    .historico-box {
+    .tabela-wrap {
       background: var(--input);
       border: 1px solid var(--borda);
       border-radius: 8px;
-      padding: 10px;
-      font-family: Consolas, monospace;
-      font-size: 0.9rem;
-      min-height: 170px;
       max-height: 280px;
       overflow-y: auto;
-      white-space: pre-wrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--borda);
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      background: var(--card-alt);
+    }
+
+    .acoes-td {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
     }
 
     .cards-resumo {
@@ -245,9 +273,26 @@
       font-size: 1.05rem;
     }
 
+    .meta-barra-wrap {
+      width: 100%;
+      height: 14px;
+      background: var(--input);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--borda);
+      margin: 8px 0;
+    }
+
+    .meta-barra-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--verde);
+      transition: width 0.25s ease;
+    }
+
     .grid-graficos {
       display: grid;
-      grid-template-columns: 1.3fr 1fr;
+      grid-template-columns: 1.2fr 1fr;
       gap: 14px;
       background: var(--card);
       border: 1px solid var(--borda);
@@ -256,9 +301,10 @@
       margin-bottom: 14px;
     }
 
-    .grid-grafico-inferior {
+    .grid-graficos-2 {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
       background: var(--card);
       border: 1px solid var(--borda);
       border-radius: 10px;
@@ -266,7 +312,7 @@
     }
 
     @media (max-width: 900px) {
-      .grid-graficos {
+      .grid-graficos, .grid-graficos-2 {
         grid-template-columns: 1fr;
       }
     }
@@ -274,20 +320,13 @@
     .grafico-box {
       position: relative;
       width: 100%;
-      height: 340px;
-      min-height: 340px;
-    }
-
-    .grafico-box-lg {
-      position: relative;
-      width: 100%;
-      height: 270px;
-      min-height: 270px;
+      height: 310px;
+      min-height: 310px;
     }
 
     .grafico-titulo {
       color: var(--ciano);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 800;
       text-align: center;
       margin-bottom: 8px;
@@ -342,9 +381,35 @@
       border: 1px solid var(--verde);
       color: #d1fae5;
     }
+
+    .modal-login {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 13, 22, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .modal-login.visivel {
+      display: flex;
+    }
   </style>
 </head>
 <body>
+  <div id="modalLogin" class="modal-login">
+    <div class="card" style="width:100%; max-width:360px; padding:22px;">
+      <div class="card-titulo ciano" style="font-size:1.1rem;">🔐 ACESSO AO NEXUS FINANCE</div>
+      <div class="campo">
+        <label for="senhaAcesso">Senha de acesso</label>
+        <input id="senhaAcesso" type="password" placeholder="Digite a senha" onkeydown="if(event.key==='Enter') fazerLogin()" />
+      </div>
+      <button class="btn btn-ciano" style="width:100%; margin-top:6px;" onclick="fazerLogin()">ENTRAR</button>
+    </div>
+  </div>
+
   <div class="topo">
     <div class="titulo">◆ NEXUS FINANCE ◆</div>
     <div class="controles-topo">
@@ -352,7 +417,11 @@
       <select id="filtroPeriodo" onchange="carregarEstado()">
         <option value="Todos">Todos</option>
       </select>
-      <a class="btn btn-csv" href="/exportar.csv">⬇ EXPORTAR CSV</a>
+      <a class="btn btn-csv" href="/exportar.csv">⬇ CSV</a>
+      <a class="btn btn-csv" href="/exportar.json">💾 BACKUP JSON</a>
+      <button class="btn btn-neutro" onclick="document.getElementById('inputImportar').click()">📂 IMPORTAR</button>
+      <input id="inputImportar" type="file" accept=".json,.csv" style="display:none" onchange="importarArquivo(this)" />
+      <button id="btnSair" class="btn btn-neutro" style="display:none" onclick="fazerLogout()">SAIR</button>
     </div>
   </div>
 
@@ -389,8 +458,20 @@
         <div class="card">
           <div class="card-titulo vermelho">💸 REGISTRAR GASTO</div>
           <div class="campo">
-            <label>Descrição (ex: Mercado, Restaurante)</label>
-            <input id="descGasto" type="text" placeholder="Ex: Mercado" />
+            <label>Descrição</label>
+            <input id="descGasto" type="text" placeholder="Ex: Mercado, Restaurante" />
+          </div>
+          <div class="campo">
+            <label>Categoria</label>
+            <select id="catGasto">
+              <option value="Alimentação">Alimentação</option>
+              <option value="Moradia">Moradia</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Lazer">Lazer</option>
+              <option value="Saúde">Saúde</option>
+              <option value="Assinaturas">Assinaturas</option>
+              <option value="Geral" selected>Geral</option>
+            </select>
           </div>
           <div class="campo">
             <label>Valor R$</label>
@@ -401,19 +482,6 @@
             <input id="dataGasto" type="text" value="{{ hoje }}" />
           </div>
           <button class="btn btn-vermelho" style="width:100%" onclick="adicionarGasto()">➖ ADICIONAR GASTO</button>
-        </div>
-
-        <div class="card">
-          <div class="card-titulo amarelo">🗑️ REMOVER LANÇAMENTO</div>
-          <div class="campo">
-            <label>Tipo: 1=Ganho  2=Gasto</label>
-            <input id="tipoDel" type="text" value="2" style="width:80px" />
-          </div>
-          <div class="campo">
-            <label>Número do item (Nº)</label>
-            <input id="numDel" type="text" style="width:80px" />
-          </div>
-          <button class="btn btn-amarelo" style="width:100%" onclick="removerLancamento()">REMOVER ITEM</button>
         </div>
       </div>
 
@@ -427,12 +495,26 @@
 
         <div class="card">
           <div class="card-titulo verde">📈 HISTÓRICO DE GANHOS</div>
-          <div id="listaGanhos" class="historico-box"></div>
+          <div class="tabela-wrap">
+            <table>
+              <thead>
+                <tr><th>Nº</th><th>Data</th><th>Descrição</th><th>Valor</th><th style="text-align:right">Ações</th></tr>
+              </thead>
+              <tbody id="corpoGanhos"></tbody>
+            </table>
+          </div>
         </div>
 
         <div class="card">
           <div class="card-titulo vermelho">📉 HISTÓRICO DE GASTOS</div>
-          <div id="listaGastos" class="historico-box"></div>
+          <div class="tabela-wrap">
+            <table>
+              <thead>
+                <tr><th>Nº</th><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th style="text-align:right">Ações</th></tr>
+              </thead>
+              <tbody id="corpoGastos"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -454,20 +536,18 @@
           </div>
           <button class="btn btn-amarelo" style="width:100%" onclick="adicionarFixo()">➕ ADICIONAR GASTO FIXO</button>
         </div>
-
-        <div class="card">
-          <div class="card-titulo ciano">🗑️ REMOVER GASTO FIXO</div>
-          <div class="campo">
-            <label>Número do gasto fixo</label>
-            <input id="numFixoDel" type="text" style="width:90px" />
-          </div>
-          <button class="btn btn-neutro" style="width:100%" onclick="removerFixo()">REMOVER FIXO</button>
-        </div>
       </div>
 
       <div class="card">
         <div class="card-titulo amarelo">📋 LISTA DE GASTOS FIXOS MENSAIS</div>
-        <div id="listaFixos" class="historico-box" style="min-height:360px"></div>
+        <div class="tabela-wrap" style="max-height:380px">
+          <table>
+            <thead>
+              <tr><th>Nº</th><th>Descrição</th><th>Valor Mensal</th><th style="text-align:right">Ações</th></tr>
+            </thead>
+            <tbody id="corpoFixos"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -487,6 +567,22 @@
       <div class="mini-card ciano">🎯 MARGEM SOBRE GANHOS<span id="resMargem" class="valor">0,0%</span></div>
       <div class="mini-card amarelo">🏆 MAIOR GASTO<span id="resMaiorGasto" class="valor">—</span></div>
       <div class="mini-card verde">🧾 MÉDIA POR GASTO<span id="resMediaGasto" class="valor">R$ 0,00</span></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div class="card-titulo amarelo" style="margin-bottom:4px;">🎯 META MENSAL DE GASTOS</div>
+          <div id="textoMetaStatus" style="font-size:0.86rem; color:var(--muted);">Nenhuma meta definida.</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input id="inputMetaMensal" type="text" placeholder="Ex: 2500,00" style="width:150px;" />
+          <button class="btn btn-amarelo" onclick="salvarMeta()">SALVAR META</button>
+        </div>
+      </div>
+      <div class="meta-barra-wrap">
+        <div id="barraMetaFill" class="meta-barra-fill"></div>
+      </div>
     </div>
 
     <div class="grid-graficos">
@@ -509,10 +605,19 @@
       </div>
     </div>
 
-    <div class="grid-grafico-inferior">
-      <div class="grafico-titulo">COMPARATIVO GERAL • CAIXA, GANHOS, GASTOS E FIXOS</div>
-      <div class="grafico-box-lg">
-        <canvas id="graficoComparativo"></canvas>
+    <div class="grid-graficos-2">
+      <div>
+        <div class="grafico-titulo">GASTOS POR CATEGORIA</div>
+        <div class="grafico-box">
+          <canvas id="graficoCategorias"></canvas>
+        </div>
+      </div>
+
+      <div>
+        <div class="grafico-titulo">COMPARATIVO GERAL • CAIXA, GANHOS, GASTOS E FIXOS</div>
+        <div class="grafico-box">
+          <canvas id="graficoComparativo"></canvas>
+        </div>
       </div>
     </div>
   </section>
@@ -537,6 +642,7 @@
     let chartBarras = null;
     let chartRosca = null;
     let chartComp = null;
+    let chartCat = null;
 
     function moeda(v) {
       return "R$ " + Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -546,7 +652,7 @@
       const el = document.getElementById("mensagemAviso");
       el.textContent = texto;
       el.className = "aviso " + tipo;
-      setTimeout(() => { el.className = "aviso"; }, 4000);
+      setTimeout(() => { el.className = "aviso"; }, 4500);
     }
 
     function trocarAba(nome, btn) {
@@ -556,67 +662,117 @@
       if (btn) btn.classList.add("ativa");
 
       if (nome === "resumo" && ultimoEstado) {
-        setTimeout(() => {
-          atualizarGraficos(ultimoEstado);
-        }, 40);
+        setTimeout(() => atualizarGraficos(ultimoEstado), 40);
       }
     }
 
-    function formatarLista(itens, prefixo) {
-      if (!itens || itens.length === 0) {
-        return "        Nenhum registro encontrado para o filtro selecionado.\n";
+    async function fazerLogin() {
+      const senha = document.getElementById("senhaAcesso").value;
+      const resp = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        mostrarAviso(data.erro || "Falha no login", "erro");
+        return;
       }
-      let out = `${"Nº".padEnd(5)} ${"Data".padEnd(12)} ${"Descrição".padEnd(28)} ${"Valor".padStart(14)}\n`;
-      out += "─".repeat(62) + "\n";
-      for (const item of itens) {
-        const desc = String(item.descricao || "").slice(0, 28).padEnd(28);
-        const val = `${prefixo}R$ ${Number(item.valor || 0).toFixed(2).padStart(9)}`;
-        out += `${String(item.idx).padEnd(5)} ${String(item.data || "").padEnd(12)} ${desc}  ${val}\n`;
-      }
-      return out;
+      document.getElementById("modalLogin").classList.remove("visivel");
+      document.getElementById("senhaAcesso").value = "";
+      carregarEstado();
     }
 
-    function formatarFixos(itens) {
-      if (!itens || itens.length === 0) {
-        return "        Nenhum gasto fixo cadastrado.\n";
+    async function fazerLogout() {
+      await fetch("/api/logout", { method: "POST" });
+      carregarEstado();
+    }
+
+    function renderTabelaGanhos(itens) {
+      const tbody = document.getElementById("corpoGanhos");
+      if (!itens || !itens.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted);text-align:center;">Nenhum ganho no período.</td></tr>`;
+        return;
       }
-      let out = `${"Nº".padEnd(5)} ${"Descrição".padEnd(34)} ${"Valor Mensal".padStart(16)}\n`;
-      out += "─".repeat(60) + "\n";
-      for (const item of itens) {
-        const desc = String(item.descricao || "").slice(0, 34).padEnd(34);
-        const val = `-R$ ${Number(item.valor || 0).toFixed(2).padStart(9)}`;
-        out += `${String(item.idx).padEnd(5)} ${desc}  ${val}\n`;
+      tbody.innerHTML = itens.map(item => `
+        <tr>
+          <td>${item.idx}</td>
+          <td>${item.data || ""}</td>
+          <td>${item.descricao || ""}</td>
+          <td class="verde">+${moeda(item.valor)}</td>
+          <td>
+            <div class="acoes-td">
+              <button class="btn btn-neutro btn-sm" onclick="editarGanho(${item.idx}, '${encodeURIComponent(item.descricao || "")}', '${item.valor || 0}', '${encodeURIComponent(item.data || "")}')">Editar</button>
+              <button class="btn btn-vermelho btn-sm" onclick="removerRapido('1', ${item.idx})">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function renderTabelaGastos(itens) {
+      const tbody = document.getElementById("corpoGastos");
+      if (!itens || !itens.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;">Nenhum gasto no período.</td></tr>`;
+        return;
       }
-      return out;
+      tbody.innerHTML = itens.map(item => `
+        <tr>
+          <td>${item.idx}</td>
+          <td>${item.data || ""}</td>
+          <td>${item.descricao || ""}</td>
+          <td><span class="ciano">${item.categoria || "Geral"}</span></td>
+          <td class="vermelho">-${moeda(item.valor)}</td>
+          <td>
+            <div class="acoes-td">
+              <button class="btn btn-neutro btn-sm" onclick="editarGasto(${item.idx}, '${encodeURIComponent(item.descricao || "")}', '${item.valor || 0}', '${encodeURIComponent(item.data || "")}', '${encodeURIComponent(item.categoria || "Geral")}')">Editar</button>
+              <button class="btn btn-vermelho btn-sm" onclick="removerRapido('2', ${item.idx})">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function renderTabelaFixos(itens) {
+      const tbody = document.getElementById("corpoFixos");
+      if (!itens || !itens.length) {
+        tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted);text-align:center;">Nenhum gasto fixo cadastrado.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = itens.map(item => `
+        <tr>
+          <td>${item.idx}</td>
+          <td>${item.descricao || ""}</td>
+          <td class="amarelo">-${moeda(item.valor)}</td>
+          <td>
+            <div class="acoes-td">
+              <button class="btn btn-neutro btn-sm" onclick="editarFixo(${item.idx}, '${encodeURIComponent(item.descricao || "")}', '${item.valor || 0}')">Editar</button>
+              <button class="btn btn-vermelho btn-sm" onclick="removerFixoRapido(${item.idx})">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
     }
 
     function atualizarGraficos(dados) {
       if (typeof Chart === "undefined") return;
 
       const topGastos = dados.top_gastos || [];
-      const labelsBar = topGastos.length
-        ? topGastos.map(x => String(x.descricao || "").slice(0, 18))
-        : ["Sem gastos"];
-      const valoresBar = topGastos.length
-        ? topGastos.map(x => Number(x.valor || 0))
-        : [0];
+      const labelsBar = topGastos.length ? topGastos.map(x => String(x.descricao || "").slice(0, 18)) : ["Sem gastos"];
+      const valoresBar = topGastos.length ? topGastos.map(x => Number(x.valor || 0)) : [0];
       const paletaBar = ["#8b5cf6", "#3b82f6", "#00e5ff", "#06b6d4", "#f97316", "#fbbf24", "#ff4d6d"];
-      const coresBar = topGastos.length
-        ? paletaBar.slice(0, valoresBar.length)
-        : ["#334155"];
 
       document.getElementById("tituloGraficoBar").textContent = `TOP GASTOS • ${dados.periodo}`;
 
       if (chartBarras) chartBarras.destroy();
-      const ctxBar = document.getElementById("graficoBarras").getContext("2d");
-      chartBarras = new Chart(ctxBar, {
+      chartBarras = new Chart(document.getElementById("graficoBarras").getContext("2d"), {
         type: "bar",
         data: {
           labels: labelsBar,
           datasets: [{
             label: "Valor (R$)",
             data: valoresBar,
-            backgroundColor: coresBar,
+            backgroundColor: topGastos.length ? paletaBar.slice(0, valoresBar.length) : ["#334155"],
             borderColor: "#00e5ff",
             borderWidth: 1,
           }],
@@ -644,8 +800,7 @@
       centroEl.className = Number(dados.sobra_apos_fixos || 0) >= 0 ? "verde" : "vermelho";
 
       if (chartRosca) chartRosca.destroy();
-      const ctxRosca = document.getElementById("graficoRosca").getContext("2d");
-      chartRosca = new Chart(ctxRosca, {
+      chartRosca = new Chart(document.getElementById("graficoRosca").getContext("2d"), {
         type: "doughnut",
         data: {
           labels: ativos.length ? ativos.map(a => a.l) : ["Sem movimentação"],
@@ -661,18 +816,40 @@
           maintainAspectRatio: false,
           animation: false,
           cutout: "62%",
-          plugins: {
-            legend: { labels: { color: "#e2e8f0", font: { weight: "bold" } } },
+          plugins: { legend: { labels: { color: "#e2e8f0", font: { weight: "bold" } } } },
+        },
+      });
+
+      const cats = dados.gastos_por_categoria || [];
+      if (chartCat) chartCat.destroy();
+      chartCat = new Chart(document.getElementById("graficoCategorias").getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: cats.length ? cats.map(c => c.categoria) : ["Sem categorias"],
+          datasets: [{
+            label: "R$",
+            data: cats.length ? cats.map(c => Number(c.valor || 0)) : [0],
+            backgroundColor: cats.length ? ["#00e5ff", "#8b5cf6", "#fbbf24", "#10b981", "#ff4d6d", "#3b82f6"] : ["#334155"],
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#e2e8f0", font: { weight: "bold" } }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
           },
         },
       });
 
       if (chartComp) chartComp.destroy();
-      const ctxComp = document.getElementById("graficoComparativo").getContext("2d");
-      chartComp = new Chart(ctxComp, {
+      chartComp = new Chart(document.getElementById("graficoComparativo").getContext("2d"), {
         type: "bar",
         data: {
-          labels: ["Saldo em Caixa", "Ganhos", "Gastos Diários", "Fixos Mensais", "Sobra Pós-Fixos"],
+          labels: ["Caixa", "Ganhos", "Gastos", "Fixos", "Sobra"],
           datasets: [{
             label: "R$",
             data: [
@@ -701,6 +878,7 @@
 
     function renderizarEstado(dados) {
       ultimoEstado = dados;
+      document.getElementById("btnSair").style.display = dados.senha_ativa ? "inline-flex" : "none";
 
       const sel = document.getElementById("filtroPeriodo");
       const atual = dados.periodo || "Todos";
@@ -721,9 +899,9 @@
       sobraEl.textContent = `⚡ SALDO: ${moeda(dados.saldo_disponivel)}`;
       sobraEl.className = Number(dados.saldo_disponivel || 0) >= 0 ? "verde" : "vermelho";
 
-      document.getElementById("listaGanhos").textContent = formatarLista(dados.ganhos, "+");
-      document.getElementById("listaGastos").textContent = formatarLista(dados.gastos, "-");
-      document.getElementById("listaFixos").textContent = formatarFixos(dados.fixos);
+      renderTabelaGanhos(dados.ganhos || []);
+      renderTabelaGastos(dados.gastos || []);
+      renderTabelaFixos(dados.fixos || []);
 
       document.getElementById("resCaixa").textContent = moeda(dados.saldo_em_caixa);
       document.getElementById("resGanhosLabel").textContent = `📈 GANHOS (${atual})`;
@@ -743,26 +921,50 @@
 
       const ganhosNum = Number(dados.total_ganhos || 0);
       const sobraNum = Number(dados.sobra_apos_fixos || 0);
-      const margemPct = ganhosNum > 0 ? ((sobraNum / ganhosNum) * 100).toFixed(1) + "%" : "0,0%";
-      document.getElementById("resMargem").textContent = margemPct;
+      document.getElementById("resMargem").textContent = ganhosNum > 0 ? ((sobraNum / ganhosNum) * 100).toFixed(1) + "%" : "0,0%";
 
       const topG = (dados.top_gastos && dados.top_gastos.length) ? dados.top_gastos[0] : null;
-      document.getElementById("resMaiorGasto").textContent = topG
-        ? `${topG.descricao} (${moeda(topG.valor)})`
-        : "—";
+      document.getElementById("resMaiorGasto").textContent = topG ? `${topG.descricao} (${moeda(topG.valor)})` : "—";
 
       const listaG = dados.gastos || [];
       const mediaG = listaG.length ? Number(dados.total_gastos || 0) / listaG.length : 0;
       document.getElementById("resMediaGasto").textContent = moeda(mediaG);
 
-      document.getElementById("lblCaixaAtualAba").textContent = moeda(dados.saldo_em_caixa);
+      const meta = Number(dados.meta_mensal || 0);
+      const gastosNum = Number(dados.total_gastos || 0);
+      const barra = document.getElementById("barraMetaFill");
+      const statusMeta = document.getElementById("textoMetaStatus");
+      if (meta > 0) {
+        const pct = Math.min(100, (gastosNum / meta) * 100);
+        const pctReal = ((gastosNum / meta) * 100).toFixed(1);
+        barra.style.width = pct + "%";
+        if (gastosNum > meta) {
+          barra.style.background = "var(--vermelho)";
+          statusMeta.innerHTML = `<span class="vermelho">⚠️ Meta ultrapassada!</span> Gasto de ${moeda(gastosNum)} de ${moeda(meta)} (${pctReal}%).`;
+        } else if (pct >= 80) {
+          barra.style.background = "var(--amarelo)";
+          statusMeta.innerHTML = `<span class="amarelo">⚡ Atenção:</span> ${pctReal}% da meta consumida (${moeda(gastosNum)} de ${moeda(meta)}).`;
+        } else {
+          barra.style.background = "var(--verde)";
+          statusMeta.innerHTML = `<span class="verde">✅ Dentro da meta:</span> ${pctReal}% consumido (${moeda(gastosNum)} de ${moeda(meta)}).`;
+        }
+      } else {
+        barra.style.width = "0%";
+        statusMeta.textContent = "Nenhuma meta mensal definida.";
+      }
 
+      document.getElementById("lblCaixaAtualAba").textContent = moeda(dados.saldo_em_caixa);
       atualizarGraficos(dados);
     }
 
     async function carregarEstado() {
       const periodo = document.getElementById("filtroPeriodo").value || "Todos";
       const resp = await fetch(`/api/estado?periodo=${encodeURIComponent(periodo)}`);
+      if (resp.status === 401) {
+        document.getElementById("modalLogin").classList.add("visivel");
+        return;
+      }
+      document.getElementById("modalLogin").classList.remove("visivel");
       const dados = await resp.json();
       renderizarEstado(dados);
     }
@@ -774,6 +976,10 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (resp.status === 401) {
+        document.getElementById("modalLogin").classList.add("visivel");
+        return false;
+      }
       const data = await resp.json();
       if (!resp.ok) {
         mostrarAviso(data.erro || "Erro na operação", "erro");
@@ -789,7 +995,7 @@
         descricao: document.getElementById("descGanho").value,
         valor: document.getElementById("valGanho").value,
         data: document.getElementById("dataGanho").value,
-      });
+      }, "Ganho adicionado!");
       if (ok) {
         document.getElementById("descGanho").value = "";
         document.getElementById("valGanho").value = "";
@@ -800,9 +1006,10 @@
     async function adicionarGasto() {
       const ok = await enviarAcao("/api/gastos", {
         descricao: document.getElementById("descGasto").value,
+        categoria: document.getElementById("catGasto").value,
         valor: document.getElementById("valGasto").value,
         data: document.getElementById("dataGasto").value,
-      });
+      }, "Gasto adicionado!");
       if (ok) {
         document.getElementById("descGasto").value = "";
         document.getElementById("valGasto").value = "";
@@ -810,37 +1017,82 @@
       }
     }
 
-    async function removerLancamento() {
-      const ok = await enviarAcao("/api/lancamentos/remover", {
-        tipo: document.getElementById("tipoDel").value,
-        numero: document.getElementById("numDel").value,
-      }, "Lançamento removido!");
-      if (ok) document.getElementById("numDel").value = "";
+    async function removerRapido(tipo, numero) {
+      await enviarAcao("/api/lancamentos/remover", { tipo, numero }, "Lançamento removido!");
+    }
+
+    async function editarGanho(idx, descEnc, valorAtual, dataEnc) {
+      const descricao = prompt("Nova descrição:", decodeURIComponent(descEnc));
+      if (descricao === null) return;
+      const valor = prompt("Novo valor (R$):", String(valorAtual));
+      if (valor === null) return;
+      const data = prompt("Nova data (DD/MM/AAAA):", decodeURIComponent(dataEnc));
+      if (data === null) return;
+      await enviarAcao("/api/lancamentos/editar", { tipo: "ganho", idx, descricao, valor, data }, "Ganho atualizado!");
+    }
+
+    async function editarGasto(idx, descEnc, valorAtual, dataEnc, catEnc) {
+      const descricao = prompt("Nova descrição:", decodeURIComponent(descEnc));
+      if (descricao === null) return;
+      const categoria = prompt("Nova categoria:", decodeURIComponent(catEnc));
+      if (categoria === null) return;
+      const valor = prompt("Novo valor (R$):", String(valorAtual));
+      if (valor === null) return;
+      const data = prompt("Nova data (DD/MM/AAAA):", decodeURIComponent(dataEnc));
+      if (data === null) return;
+      await enviarAcao("/api/lancamentos/editar", { tipo: "gasto", idx, descricao, categoria, valor, data }, "Gasto atualizado!");
     }
 
     async function adicionarFixo() {
       const ok = await enviarAcao("/api/fixos", {
         descricao: document.getElementById("descFixo").value,
         valor: document.getElementById("valFixo").value,
-      });
+      }, "Gasto fixo adicionado!");
       if (ok) {
         document.getElementById("descFixo").value = "";
         document.getElementById("valFixo").value = "";
       }
     }
 
-    async function removerFixo() {
-      const ok = await enviarAcao("/api/fixos/remover", {
-        numero: document.getElementById("numFixoDel").value,
-      }, "Gasto fixo removido!");
-      if (ok) document.getElementById("numFixoDel").value = "";
+    async function editarFixo(idx, descEnc, valorAtual) {
+      const descricao = prompt("Nova descrição do gasto fixo:", decodeURIComponent(descEnc));
+      if (descricao === null) return;
+      const valor = prompt("Novo valor mensal (R$):", String(valorAtual));
+      if (valor === null) return;
+      await enviarAcao("/api/fixos/editar", { idx, descricao, valor }, "Gasto fixo atualizado!");
+    }
+
+    async function removerFixoRapido(numero) {
+      await enviarAcao("/api/fixos/remover", { numero }, "Gasto fixo removido!");
     }
 
     async function atualizarCaixa() {
       const ok = await enviarAcao("/api/caixa", {
         valor: document.getElementById("entryCaixa").value,
-      }, "Saldo em caixa atualizado com sucesso!");
+      }, "Saldo em caixa atualizado!");
       if (ok) document.getElementById("entryCaixa").value = "";
+    }
+
+    async function salvarMeta() {
+      const ok = await enviarAcao("/api/meta", {
+        meta_mensal: document.getElementById("inputMetaMensal").value,
+      }, "Meta mensal salva!");
+      if (ok) document.getElementById("inputMetaMensal").value = "";
+    }
+
+    async function importarArquivo(input) {
+      if (!input.files || !input.files.length) return;
+      const formData = new FormData();
+      formData.append("arquivo", input.files[0]);
+      const resp = await fetch("/api/importar", { method: "POST", body: formData });
+      const data = await resp.json();
+      input.value = "";
+      if (!resp.ok) {
+        mostrarAviso(data.erro || "Erro ao importar", "erro");
+        return;
+      }
+      renderizarEstado(data.estado);
+      mostrarAviso("Backup importado com sucesso!", "ok");
     }
 
     carregarEstado();
