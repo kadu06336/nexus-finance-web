@@ -33,7 +33,7 @@
       background: var(--fundo);
       color: var(--texto);
       min-height: 100vh;
-      padding: 16px 24px 28px;
+      padding: 16px 24px 36px;
     }
 
     .topo {
@@ -209,7 +209,14 @@
     .cards-resumo {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .cards-extra {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       margin-bottom: 14px;
     }
 
@@ -217,15 +224,18 @@
       .cards-resumo {
         grid-template-columns: repeat(2, 1fr);
       }
+      .cards-extra {
+        grid-template-columns: 1fr;
+      }
     }
 
     .mini-card {
       background: var(--card);
       border: 1px solid var(--borda);
       border-radius: 8px;
-      padding: 12px 8px;
+      padding: 12px 10px;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 800;
     }
 
@@ -237,8 +247,18 @@
 
     .grid-graficos {
       display: grid;
-      grid-template-columns: 1.25fr 1fr;
+      grid-template-columns: 1.3fr 1fr;
       gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .grid-grafico-inferior {
+      display: grid;
+      grid-template-columns: 1fr;
       background: var(--card);
       border: 1px solid var(--borda);
       border-radius: 10px;
@@ -253,7 +273,16 @@
 
     .grafico-box {
       position: relative;
-      height: 360px;
+      width: 100%;
+      height: 340px;
+      min-height: 340px;
+    }
+
+    .grafico-box-lg {
+      position: relative;
+      width: 100%;
+      height: 270px;
+      min-height: 270px;
     }
 
     .grafico-titulo {
@@ -272,7 +301,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      padding-top: 20px;
+      padding-top: 22px;
     }
 
     .sobra-centro small {
@@ -330,10 +359,10 @@
   <div id="mensagemAviso" class="aviso"></div>
 
   <div class="abas">
-    <button class="aba-btn ativa" onclick="trocarAba('diario', this)">📅 LANÇAMENTOS DIÁRIOS</button>
-    <button class="aba-btn" onclick="trocarAba('fixos', this)">🔄 GASTOS FIXOS MENSAIS</button>
-    <button class="aba-btn" onclick="trocarAba('resumo', this)">📊 RESUMO & GRÁFICO</button>
-    <button class="aba-btn" onclick="trocarAba('caixa', this)">💵 SALDO EM CAIXA</button>
+    <button id="btn-diario" class="aba-btn ativa" onclick="trocarAba('diario', this)">📅 LANÇAMENTOS DIÁRIOS</button>
+    <button id="btn-fixos" class="aba-btn" onclick="trocarAba('fixos', this)">🔄 GASTOS FIXOS MENSAIS</button>
+    <button id="btn-resumo" class="aba-btn" onclick="trocarAba('resumo', this)">📊 RESUMO & GRÁFICO</button>
+    <button id="btn-caixa" class="aba-btn" onclick="trocarAba('caixa', this)">💵 SALDO EM CAIXA</button>
   </div>
 
   <!-- ABA 1: LANÇAMENTOS DIÁRIOS -->
@@ -454,6 +483,12 @@
       <div class="mini-card">💎 SOBRA APÓS FIXOS<span id="resMensalFinal" class="valor verde">R$ 0,00</span></div>
     </div>
 
+    <div class="cards-extra">
+      <div class="mini-card ciano">🎯 MARGEM SOBRE GANHOS<span id="resMargem" class="valor">0,0%</span></div>
+      <div class="mini-card amarelo">🏆 MAIOR GASTO<span id="resMaiorGasto" class="valor">—</span></div>
+      <div class="mini-card verde">🧾 MÉDIA POR GASTO<span id="resMediaGasto" class="valor">R$ 0,00</span></div>
+    </div>
+
     <div class="grid-graficos">
       <div>
         <div id="tituloGraficoBar" class="grafico-titulo">TOP GASTOS • Todos</div>
@@ -471,6 +506,13 @@
             <strong id="sobraLiquidaCentro" class="verde">R$ 0</strong>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="grid-grafico-inferior">
+      <div class="grafico-titulo">COMPARATIVO GERAL • CAIXA, GANHOS, GASTOS E FIXOS</div>
+      <div class="grafico-box-lg">
+        <canvas id="graficoComparativo"></canvas>
       </div>
     </div>
   </section>
@@ -491,8 +533,10 @@
 
   <script>
     const HOJE = "{{ hoje }}";
+    let ultimoEstado = null;
     let chartBarras = null;
     let chartRosca = null;
+    let chartComp = null;
 
     function moeda(v) {
       return "R$ " + Number(v || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -509,10 +553,12 @@
       document.querySelectorAll(".aba-conteudo").forEach(sec => sec.classList.remove("ativa"));
       document.querySelectorAll(".aba-btn").forEach(b => b.classList.remove("ativa"));
       document.getElementById("aba-" + nome).classList.add("ativa");
-      btn.classList.add("ativa");
-      if (nome === "resumo") {
-        if (chartBarras) chartBarras.resize();
-        if (chartRosca) chartRosca.resize();
+      if (btn) btn.classList.add("ativa");
+
+      if (nome === "resumo" && ultimoEstado) {
+        setTimeout(() => {
+          atualizarGraficos(ultimoEstado);
+        }, 40);
       }
     }
 
@@ -545,10 +591,19 @@
     }
 
     function atualizarGraficos(dados) {
+      if (typeof Chart === "undefined") return;
+
       const topGastos = dados.top_gastos || [];
-      const labelsBar = topGastos.map(x => x.descricao.slice(0, 18));
-      const valoresBar = topGastos.map(x => Number(x.valor || 0));
-      const coresBar = ["#8b5cf6", "#3b82f6", "#00e5ff", "#06b6d4", "#f97316", "#fbbf24", "#ff4d6d"].slice(-valoresBar.length);
+      const labelsBar = topGastos.length
+        ? topGastos.map(x => String(x.descricao || "").slice(0, 18))
+        : ["Sem gastos"];
+      const valoresBar = topGastos.length
+        ? topGastos.map(x => Number(x.valor || 0))
+        : [0];
+      const paletaBar = ["#8b5cf6", "#3b82f6", "#00e5ff", "#06b6d4", "#f97316", "#fbbf24", "#ff4d6d"];
+      const coresBar = topGastos.length
+        ? paletaBar.slice(0, valoresBar.length)
+        : ["#334155"];
 
       document.getElementById("tituloGraficoBar").textContent = `TOP GASTOS • ${dados.periodo}`;
 
@@ -557,11 +612,11 @@
       chartBarras = new Chart(ctxBar, {
         type: "bar",
         data: {
-          labels: labelsBar.length ? labelsBar : ["Sem gastos no período"],
+          labels: labelsBar,
           datasets: [{
             label: "Valor (R$)",
-            data: valoresBar.length ? valoresBar : [0],
-            backgroundColor: coresBar.length ? coresBar : ["#1e293b"],
+            data: valoresBar,
+            backgroundColor: coresBar,
             borderColor: "#00e5ff",
             borderWidth: 1,
           }],
@@ -570,18 +625,19 @@
           indexAxis: "y",
           responsive: true,
           maintainAspectRatio: false,
+          animation: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
+            x: { beginAtZero: true, ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
             y: { ticks: { color: "#e2e8f0", font: { weight: "bold" } }, grid: { display: false } },
           },
         },
       });
 
       const ativos = [];
-      if (dados.total_ganhos > 0) ativos.push({ l: "Ganhos", v: dados.total_ganhos, c: "#10b981" });
-      if (dados.total_gastos > 0) ativos.push({ l: "Gastos Diários", v: dados.total_gastos, c: "#ff4d6d" });
-      if (dados.total_fixos > 0) ativos.push({ l: "Fixos Mensais", v: dados.total_fixos, c: "#fbbf24" });
+      if (Number(dados.total_ganhos || 0) > 0) ativos.push({ l: "Ganhos", v: Number(dados.total_ganhos), c: "#10b981" });
+      if (Number(dados.total_gastos || 0) > 0) ativos.push({ l: "Gastos Diários", v: Number(dados.total_gastos), c: "#ff4d6d" });
+      if (Number(dados.total_fixos || 0) > 0) ativos.push({ l: "Fixos Mensais", v: Number(dados.total_fixos), c: "#fbbf24" });
 
       const centroEl = document.getElementById("sobraLiquidaCentro");
       centroEl.textContent = "R$ " + Math.round(Number(dados.sobra_apos_fixos || 0)).toLocaleString("pt-BR");
@@ -595,7 +651,7 @@
           labels: ativos.length ? ativos.map(a => a.l) : ["Sem movimentação"],
           datasets: [{
             data: ativos.length ? ativos.map(a => a.v) : [1],
-            backgroundColor: ativos.length ? ativos.map(a => a.c) : ["#1e293b"],
+            backgroundColor: ativos.length ? ativos.map(a => a.c) : ["#334155"],
             borderColor: "#111827",
             borderWidth: 3,
           }],
@@ -603,15 +659,49 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: false,
           cutout: "62%",
           plugins: {
             legend: { labels: { color: "#e2e8f0", font: { weight: "bold" } } },
           },
         },
       });
+
+      if (chartComp) chartComp.destroy();
+      const ctxComp = document.getElementById("graficoComparativo").getContext("2d");
+      chartComp = new Chart(ctxComp, {
+        type: "bar",
+        data: {
+          labels: ["Saldo em Caixa", "Ganhos", "Gastos Diários", "Fixos Mensais", "Sobra Pós-Fixos"],
+          datasets: [{
+            label: "R$",
+            data: [
+              Number(dados.saldo_em_caixa || 0),
+              Number(dados.total_ganhos || 0),
+              Number(dados.total_gastos || 0),
+              Number(dados.total_fixos || 0),
+              Number(dados.sobra_apos_fixos || 0),
+            ],
+            backgroundColor: ["#00e5ff", "#10b981", "#ff4d6d", "#fbbf24", "#8b5cf6"],
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#e2e8f0", font: { weight: "bold" } }, grid: { display: false } },
+            y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(0, 229, 255, 0.12)" } },
+          },
+        },
+      });
     }
 
     function renderizarEstado(dados) {
+      ultimoEstado = dados;
+
       const sel = document.getElementById("filtroPeriodo");
       const atual = dados.periodo || "Todos";
       sel.innerHTML = "";
@@ -650,6 +740,20 @@
       const mensalEl = document.getElementById("resMensalFinal");
       mensalEl.textContent = moeda(dados.sobra_apos_fixos);
       mensalEl.className = "valor " + (Number(dados.sobra_apos_fixos || 0) >= 0 ? "verde" : "vermelho");
+
+      const ganhosNum = Number(dados.total_ganhos || 0);
+      const sobraNum = Number(dados.sobra_apos_fixos || 0);
+      const margemPct = ganhosNum > 0 ? ((sobraNum / ganhosNum) * 100).toFixed(1) + "%" : "0,0%";
+      document.getElementById("resMargem").textContent = margemPct;
+
+      const topG = (dados.top_gastos && dados.top_gastos.length) ? dados.top_gastos[0] : null;
+      document.getElementById("resMaiorGasto").textContent = topG
+        ? `${topG.descricao} (${moeda(topG.valor)})`
+        : "—";
+
+      const listaG = dados.gastos || [];
+      const mediaG = listaG.length ? Number(dados.total_gastos || 0) / listaG.length : 0;
+      document.getElementById("resMediaGasto").textContent = moeda(mediaG);
 
       document.getElementById("lblCaixaAtualAba").textContent = moeda(dados.saldo_em_caixa);
 
